@@ -79,8 +79,8 @@ namespace ServiceBus.OpenSdk
         {
             if (protocol != null && protocol.ToLower() == "http")
             {
-
-                AssemblyName asmName = new AssemblyName("IotHub.Http");
+                AssemblyName asmName = new AssemblyName("ServiceBus.OpenSdk.Http");
+                //AssemblyName asmName = new AssemblyName("IotHub.Http");
                 //AssemblyName asmName = new AssemblyName("IotHub.Http.Win32");
                 var asm = Assembly.Load(asmName);
 
@@ -90,7 +90,8 @@ namespace ServiceBus.OpenSdk
             }
             else if (protocol != null && protocol.ToLower() == "amqp")
             {
-                AssemblyName asmName = new AssemblyName("IotHub.Amqp");
+                AssemblyName asmName = new AssemblyName("ServiceBus.OpenSdk.Amqp");
+                //AssemblyName asmName = new AssemblyName("IotHub.Amqp");
                 //AssemblyName asmName = new AssemblyName("IotHub.Amqp.Win32");
                 var asm = Assembly.Load(asmName);
                 var itransportType = asm.GetType("IotHub.OpenSdk.AmqpTransport");
