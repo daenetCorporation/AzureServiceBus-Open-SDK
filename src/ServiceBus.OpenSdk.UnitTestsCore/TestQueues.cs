@@ -17,7 +17,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         {
             settings = new Settings()
             {
-                EndPoint = "Endpoint=sb://iotlabcore.servicebus.windows.net/;SharedAccessKeyName=iotLabCore;SharedAccessKey=QbH/yR4rUHa80Lmiz7oCVl0bBIEclfMBZ/luFkQv0sA="
+                EndPoint = ""
 
             };
         }
