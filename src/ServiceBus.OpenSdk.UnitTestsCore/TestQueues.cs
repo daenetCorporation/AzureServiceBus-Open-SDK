@@ -15,11 +15,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         Settings settings;
         public TestQueues()
         {
-            settings = new Settings()
-            {
-                EndPoint = ""
-
-            };
+         
         }
 
         /// <summary>
@@ -30,7 +26,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         /// <returns>Queue Client</returns>
         private QueueClient getQueueClient(string path, string protocol)
         {
-            return QueueClient.FromConnectionString(settings.EndPoint, path, protocol);
+            return QueueClient.FromConnectionString(Settings.EndPoint, path, protocol);
         }
 
 
@@ -48,7 +44,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             {
                 Properties = { { key, value } }
             };
-            client.Send(msg);
+            client.Send(msg).Wait();
 
             var rcvMsg = client.Receive(ReceiveMode.ReceiveAndDelete).Result;
             Stream strm = rcvMsg.GetBodyStream();
@@ -204,16 +200,18 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             string key = "test";
             Int64 value = 12345;
             TestClass cls = new TestClass();
-            Message msg = new Message(cls)
+            Message msg = new Message("abc")
             {
                 Properties = { { key, value } }
             };
-            client.Send(msg);
+
+            client.Send(msg).Wait();
+
             var rcvMsg = client.Receive(ReceiveMode.ReceiveAndDelete).Result;
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.Properties != null);
             Assert.True(rcvMsg.Properties.ContainsKey(key));
-
+        
             Assert.True(Int64.Parse((String)rcvMsg.Properties[key]) == value);
             Assert.True(rcvMsg.GetBody<TestClass>() != null);
         }

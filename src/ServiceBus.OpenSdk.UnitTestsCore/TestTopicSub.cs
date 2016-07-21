@@ -32,10 +32,6 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         public TestTopicSub()
         {
 
-            settings = new Settings()
-            {
-                EndPoint = ""
-            };
         }
         /// <summary>
         /// Returns the topic client for service bus
@@ -45,12 +41,12 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         /// <returns>Topic client</returns>
         private TopicClient getTopicClient(string topicName, string protocol)
         {
-            return TopicClient.FromConnectionString(settings.EndPoint, topicName, protocol);
+            return TopicClient.FromConnectionString(Settings.EndPoint, topicName, protocol);
         }
 
         private SubscriptionClient getSubscriptionClient(string topicName, string subName, string protocol)
         {
-            return SubscriptionClient.FromConnectionString(settings.EndPoint, topicName, subName, protocol);
+            return SubscriptionClient.FromConnectionString(Settings.EndPoint, topicName, subName, protocol);
         }
 
         /// <summary>

@@ -18,10 +18,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         public TestEventHub()
         {
 
-            settings = new Settings()
-            {
-                EndPoint = ""
-            };
+         
         }
         /// <summary>
         /// 
@@ -31,7 +28,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         /// <returns></returns>
         private EventHubClient getEventHubClient(string eventHubName, string protocol)
         {
-            return EventHubClient.FromConnectionString(settings.EndPoint, protocol);
+            return EventHubClient.FromConnectionString(Settings.EndPoint, protocol);
         }
         /// <summary>
         /// Send message to evethub via http protocol 
