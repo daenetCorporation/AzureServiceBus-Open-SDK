@@ -10,7 +10,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Diagnostics;
-using Newtonsoft.Json.Linq;
 
 namespace IotHub.OpenSdk
 {
@@ -269,10 +268,10 @@ namespace IotHub.OpenSdk
 
             if (message.ApplicationProperties != null)
             {
-                foreach (var prop in message.ApplicationProperties.Map)
-                {
-                    //msg.Properties.Add(prop.Key.ToString(), prop.Value);
-                }
+                //foreach (var prop in message.ApplicationProperties.Map)
+                //{
+                //    msg.Properties.Add(prop.Key.ToString(), prop.Value);
+                //}
 
                 foreach (string key in message.ApplicationProperties.Map.Keys)
                 {
