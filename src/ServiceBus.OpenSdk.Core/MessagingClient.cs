@@ -1,22 +1,14 @@
-//#define CERTS                  
-// 
-//  (c) Microsoft Corporation. See LICENSE.TXT file for licensing details
-//  
 namespace ServiceBus.OpenSdk
 {
     using IotHub.OpenSdk;
     using System;
     using System.Reflection;
-    using System.Diagnostics;
     using System.Collections.Generic;
-    using System.IO;
-    using System.Net;
     using System.Net.Http;
-    using System.Runtime.Serialization.Json;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
 
-    
+
     public class MessagingClient
     {
         public const string cKeyTokenProvider = "tokenProvider";
@@ -60,11 +52,7 @@ namespace ServiceBus.OpenSdk
 
         public MessagingClient(string sbnamespace, string entityPath,
             TokenProvider tokenProvider, string protocol)
-        {
-            //this.BaseAddress = new Uri(String.Format("https://{0}.servicebus.windows.net", sbnamespace));
-            //this.tokenProvider = tokenProvider;
-            //this.m_EntityPath = entityPath;
-
+        { 
             Dictionary<string, object> args = new Dictionary<string, object>();
             args.Add(SBNAMESPACE, sbnamespace);
             args.Add(ENTITY, entityPath);
@@ -79,9 +67,7 @@ namespace ServiceBus.OpenSdk
         {
             if (protocol != null && protocol.ToLower() == "http")
             {
-                AssemblyName asmName = new AssemblyName("ServiceBus.OpenSdk.Http");
-                //AssemblyName asmName = new AssemblyName("IotHub.Http");
-                //AssemblyName asmName = new AssemblyName("IotHub.Http.Win32");
+                AssemblyName asmName = new AssemblyName("ServiceBus.OpenSdk.Http");   
                 var asm = Assembly.Load(asmName);
 
                 var itransportType = asm.GetType("IotHub.OpenSdk.HttpTransport");
@@ -90,9 +76,7 @@ namespace ServiceBus.OpenSdk
             }
             else if (protocol != null && protocol.ToLower() == "amqp")
             {
-                AssemblyName asmName = new AssemblyName("ServiceBus.OpenSdk.Amqp");
-                //AssemblyName asmName = new AssemblyName("IotHub.Amqp");
-                //AssemblyName asmName = new AssemblyName("IotHub.Amqp.Win32");
+                AssemblyName asmName = new AssemblyName("ServiceBus.OpenSdk.Amqp");  
                 var asm = Assembly.Load(asmName);
                 var itransportType = asm.GetType("IotHub.OpenSdk.AmqpTransport");
                 IIotTransport transportInstance = Activator.CreateInstance(itransportType, args) as IIotTransport;
@@ -103,8 +87,7 @@ namespace ServiceBus.OpenSdk
 
 
         protected static MessagingClient FromConnectionString(string connStr)
-        {
-            // See in constructor what we need.
+        {                                       
             throw new Exception("You must implement this method.");
         }
 
@@ -158,12 +141,8 @@ namespace ServiceBus.OpenSdk
 
         protected static Dictionary<string, object> ParseConnectionString(string connectionString)
         {
-            Dictionary<string, object> args = new Dictionary<string, object>();
-
-            //Regex rgx = new Regex("^Endpoint=sb://[a-zA-Z0-9]+.servicebus.windows.net/;SharedAccessKeyName=[a-zA-Z0-9+_-]+;SharedAccessKey=[a-zA-Z0-9+/]+=;EntityPath=[a-zA-Z0-9+/]+;TransportType=[a-zA-Z0-9]+$");
-            Regex rgx = new Regex("^Endpoint=sb://[a-zA-Z0-9]+.servicebus.+[a-zA-Z0-9]+.[a-zA-Z0-9]{2,5}/;SharedAccessKeyName=[a-zA-Z0-9+_-]+;SharedAccessKey=[a-zA-Z0-9+/]+=;EntityPath=[a-zA-Z0-9+/]+;TransportType=[a-zA-Z0-9]+$");
-
-            //"Endpoint=sb://iotlab2.servicebus.windows.net/;SharedAccessKeyName=can_read_send;SharedAccessKey=N0tu6S65oNIWELenHQKvrHHlKzscgfXom2Ke1bOV244=;Entity=samplequeue;TransportType=http";
+            Dictionary<string, object> args = new Dictionary<string, object>();                                                                                                                                                                                                         
+            Regex rgx = new Regex("^Endpoint=sb://[a-zA-Z0-9]+.servicebus.+[a-zA-Z0-9]+.[a-zA-Z0-9]{2,5}/;SharedAccessKeyName=[a-zA-Z0-9+_-]+;SharedAccessKey=[a-zA-Z0-9+/]+=;EntityPath=[a-zA-Z0-9+/]+;TransportType=[a-zA-Z0-9]+$");                                                                                                                                                                                      
             if (rgx.IsMatch(connectionString))
             {
                 string[] words = connectionString.Split(';');
@@ -209,42 +188,5 @@ namespace ServiceBus.OpenSdk
                 
             }
         }
-        //HttpWebRequest CreateSendRequest()
-        //{
-        //    var requestUriString = this.entityAddress.AbsoluteUri + "/messages";
-        //    var wq = (HttpWebRequest) WebRequest.Create(requestUriString);
-        //    wq.ProtocolVersion = HttpVersion.Version11;
-        //    wq.KeepAlive = true;
-        //    if (wq.RequestUri.Scheme == "https")
-        //    {
-        //        wq.Headers.Add("Authorization", this.tokenProvider.GetToken(this.entityAddress));
-        //    }
-        //    return wq;
-        //}
-
-        //HttpClient CreateReceiveRequest(TimeSpan timeout)
-        //{
-        //     var wq = (HttpWebRequest) WebRequest.Create(this.entityAddress.AbsoluteUri + "/messages/head?timeout=" + (timeout.Ticks/TimeSpan.TicksPerSecond));
-        //    wq.ProtocolVersion = HttpVersion.Version11;
-        //    wq.KeepAlive = true;
-        //    if (wq.RequestUri.Scheme == "https")
-        //    {
-        //        wq.Headers.Add("Authorization", this.tokenProvider.GetToken(this.entityAddress));
-        //    }
-        //    return wq;
-        //}
-
-        //HttpWebRequest CreateLockRequest(string method, Uri lockUri)
-        //{
-        //    var wq = (HttpWebRequest) WebRequest.Create(lockUri);
-        //    wq.ProtocolVersion = HttpVersion.Version11;
-        //    wq.KeepAlive = true;
-        //    wq.Method = method;
-        //    if (wq.RequestUri.Scheme == "https")
-        //    {
-        //        wq.Headers.Add("Authorization", this.tokenProvider.GetToken(this.entityAddress));
-        //    }
-        //    return wq;
-        //}
     }
 }

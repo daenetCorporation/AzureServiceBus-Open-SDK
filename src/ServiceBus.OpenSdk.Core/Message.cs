@@ -1,17 +1,11 @@
-using IotHub.OpenSdk.Core;
-// 
-//  (c) Microsoft Corporation. See LICENSE.TXT file for licensing details
-//  
+using IotHub.OpenSdk.Core; 
 namespace ServiceBus.OpenSdk
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.IO;
-    using System.Net;
-    using System.Net.Http.Headers;
     using System.Runtime.Serialization;
-  
+
     public class Message
     {
         // readonly MessagingClient client;
@@ -109,7 +103,7 @@ namespace ServiceBus.OpenSdk
         public T GetBody<T>(XmlObjectSerializer serializer = null)
         {
             if (this.Body != null)
-            {
+             {
                 return (T)this.Body;
             }
             else

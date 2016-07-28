@@ -1,6 +1,3 @@
-// 
-//  (c) Microsoft Corporation. See LICENSE.TXT file for licensing details
-//  
 namespace Microsoft.ServiceBus.Micro
 {
     using System;

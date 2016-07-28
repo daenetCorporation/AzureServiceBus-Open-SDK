@@ -1,6 +1,3 @@
-// 
-//  By Elze Kool see http://www.microframework.nl/2009/09/05/shahmac-digest-class/
-//  
 namespace ElzeKool
 {
     using System;
@@ -69,32 +66,20 @@ namespace ElzeKool
         /// <param name = "value">Password</param>
         /// <returns>32 byte HMAC_SHA256</returns>
         public static byte[] computeHMAC_SHA256(byte[] secret, byte[] value)
-        {
-            // Create two arrays, bi and bo
+        {                                 
             var bi = new byte[64 + value.Length];
-            var bo = new byte[64 + 32];
-
-            // Copy secret to both arrays
+            var bo = new byte[64 + 32];   
             Array.Copy(secret, bi, secret.Length);
             Array.Copy(secret, bo, secret.Length);
 
             for (var i = 0; i < 64; i++)
-            {
-                // Xor bi with 0x36
-                bi[i] = (byte) (bi[i] ^ 0x36);
-
-                // Xor bo with 0x5c
+            {                      
+                bi[i] = (byte) (bi[i] ^ 0x36); 
                 bo[i] = (byte) (bo[i] ^ 0x5c);
-            }
-
-            // Append value to bi
-            Array.Copy(value, 0, bi, 64, value.Length);
-
-            // Append SHA256(bi) to bo
+            }                    
+            Array.Copy(value, 0, bi, 64, value.Length);    
             var sha_bi = computeSHA256(bi);
-            Array.Copy(sha_bi, 0, bo, 64, 32);
-
-            // Return SHA256(bo)
+            Array.Copy(sha_bi, 0, bo, 64, 32);  
             return computeSHA256(bo);
         }
 
@@ -103,8 +88,7 @@ namespace ElzeKool
         /// </summary>
         /// <param name = "input">Input array</param>
         public static byte[] computeSHA256(byte[] input)
-        {
-            // Initialize working parameters
+        {                                    
             uint a, b, c, d, e, f, g, h, i, s0, s1, t1, t2;
             uint h0 = 0x6a09e667;
             var h1 = 0xbb67ae85;
@@ -114,48 +98,30 @@ namespace ElzeKool
             var h5 = 0x9b05688c;
             uint h6 = 0x1f83d9ab;
             uint h7 = 0x5be0cd19;
-            uint blockstart = 0;
-
-            // Calculate how long the padded message should be
+            uint blockstart = 0;                               
             var newinputlength = input.Length + 1;
-            while ((newinputlength%64) != 56) // length mod 512bits = 448bits
+            while ((newinputlength%64) != 56) 
             {
                 newinputlength++;
-            }
-
-            // Create array for padded data
+            }                              
             var processed = new byte[newinputlength + 8];
             Array.Copy(input, processed, input.Length);
-
-            // Pad data with an 1
-            processed[input.Length] = 0x80;
-
-            // Pad data with big endian 64bit length of message
-            // We do only 32 bits becouse input.length is 32 bit
+            processed[input.Length] = 0x80; 
             processed[processed.Length - 4] = (byte) (((input.Length*8) & 0xFF000000) >> 24);
             processed[processed.Length - 3] = (byte) (((input.Length*8) & 0x00FF0000) >> 16);
             processed[processed.Length - 2] = (byte) (((input.Length*8) & 0x0000FF00) >> 8);
-            processed[processed.Length - 1] = (byte) (((input.Length*8) & 0x000000FF));
-
-            // Block of 32 bits values used in calculations
-            var wordblock = new uint[64];
-
-            // Now process each 512 bit block
+            processed[processed.Length - 1] = (byte) (((input.Length*8) & 0x000000FF)); 
+            var wordblock = new uint[64];      
             while (blockstart < processed.Length)
-            {
-                // break chunk into sixteen 32-bit big-endian words 
+            {                                                      
                 for (i = 0; i < 16; i++)
-                    wordblock[i] = big_endian_from_bytes(processed, blockstart + (i*4));
-
-                // Extend the sixteen 32-bit words into sixty-four 32-bit words:
+                    wordblock[i] = big_endian_from_bytes(processed, blockstart + (i*4)); 
                 for (i = 16; i < 64; i++)
                 {
                     s0 = rotateright(wordblock[i - 15], 7) ^ rotateright(wordblock[i - 15], 18) ^ (wordblock[i - 15] >> 3);
                     s1 = rotateright(wordblock[i - 2], 17) ^ rotateright(wordblock[i - 2], 19) ^ (wordblock[i - 2] >> 10);
                     wordblock[i] = wordblock[i - 16] + s0 + wordblock[i - 7] + s1;
-                }
-
-                // Initialize hash value for this chunk:
+                }                                        
                 a = h0;
                 b = h1;
                 c = h2;
@@ -163,9 +129,7 @@ namespace ElzeKool
                 e = h4;
                 f = h5;
                 g = h6;
-                h = h7;
-
-                // Main loop
+                h = h7;      
                 for (i = 0; i < 64; i++)
                 {
                     t1 = h + (rotateright(e, 6) ^ rotateright(e, 11) ^ rotateright(e, 25)) + choice(e, f, g) + sha256_k[i] + wordblock[i];
@@ -178,9 +142,7 @@ namespace ElzeKool
                     c = b;
                     b = a;
                     a = t1 + t2;
-                }
-
-                // Add this chunk's hash to result so far
+                }                                        
                 h0 += a;
                 h1 += b;
                 h2 += c;
@@ -189,12 +151,9 @@ namespace ElzeKool
                 h5 += f;
                 h6 += g;
                 h7 += h;
-
-                // Process next 512bit block
+                                             
                 blockstart += 64;
-            }
-
-            // Prepare output
+            }                
             var output = new byte[32];
             bytes_from_big_endian(h0, ref output, 0);
             bytes_from_big_endian(h1, ref output, 4);

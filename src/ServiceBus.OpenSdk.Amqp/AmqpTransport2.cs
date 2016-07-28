@@ -1,15 +1,10 @@
-﻿//using Amqp;
-using Amqp;
+﻿using Amqp;
 using Amqp.Framing;
 using Amqp.Types;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
-using System.Reflection;
-using System.Diagnostics;
 
 namespace IotHub.OpenSdk
 {
@@ -18,7 +13,7 @@ namespace IotHub.OpenSdk
 
         private string sbNamespace;
 
-        private string entity; //= "q1";
+        private string entity; 
         private ServiceBus.OpenSdk.TokenProvider sasToken;
 
 
@@ -31,12 +26,8 @@ namespace IotHub.OpenSdk
         public AmqpTransport(Dictionary<string, object> args)
         {
             if (args[ServiceBus.OpenSdk.MessagingClient.TOKEN_PROVIDER] == null)
-                throw new ArgumentException("Argument 'tokenProvider' must be specified");
-
-            //TODO read all required arguments here
+                throw new ArgumentException("Argument 'tokenProvider' must be specified");       
             this.sbNamespace = args[ServiceBus.OpenSdk.MessagingClient.SBNAMESPACE].ToString();
-            //this.keyName = args["keyName"].ToString();
-            //this.keyValue = args["keyValue"].ToString();
             this.entity = args[ServiceBus.OpenSdk.MessagingClient.ENTITY].ToString();
             this.sasToken = args[ServiceBus.OpenSdk.MessagingClient.TOKEN_PROVIDER] as ServiceBus.OpenSdk.TokenProvider;
 
@@ -44,9 +35,7 @@ namespace IotHub.OpenSdk
             {
                 await this.CreateConnection();
 
-            }).GetAwaiter().GetResult();
-
-            //throw new NotImplementedException("TODO read all required arguments here");
+            }).GetAwaiter().GetResult();                                                  
         }
 
         private async Task CreateConnection()
@@ -103,19 +92,14 @@ namespace IotHub.OpenSdk
         }
 
         public async Task<ServiceBus.OpenSdk.Message> Receive(ServiceBus.OpenSdk.ReceiveOptions receiveOptions)
-        {
-            //Session session = new Session(connection);
-
-            //Message message = await this.receiver.ReceiveAsync(Convert.ToInt32(receiveOptions.TimeOut.TotalSeconds));
-
+        { 
             var message = receiver.Receive();
 
             if (message == null)
                 return null;
             //            var message = receiver.Receive();
 
-            ServiceBus.OpenSdk.Message msg = map(message);
-            //var receiver = new ReceiverLink(session, "ServiceBus.Cbs:receiver-link", entity);
+            ServiceBus.OpenSdk.Message msg = map(message); 
             if (receiveOptions != null)
             {
                 if (receiveOptions.ReceiveMode == ServiceBus.OpenSdk.ReceiveMode.ReceiveAndDelete)
@@ -128,12 +112,8 @@ namespace IotHub.OpenSdk
                 receiver.Release(message);
             }
 
-            msg.amqpMessage = message;
-            //await receiver.CloseAsync();
-            //await session.CloseAsync();
-            return msg;
-
-            //throw new NotImplementedException();
+            msg.amqpMessage = message;     
+            return msg;   
         }
 
         public Task<ServiceBus.OpenSdk.Message> ReceiveBatch()
@@ -267,15 +247,10 @@ namespace IotHub.OpenSdk
 
 
             if (message.ApplicationProperties != null)
-            {
-                //foreach (var prop in message.ApplicationProperties.Map)
-                //{
-                //    msg.Properties.Add(prop.Key.ToString(), prop.Value);
-                //}
+            {   
 
                 foreach (string key in message.ApplicationProperties.Map.Keys)
-                {
-                    //Debug.WriteLine("{0}:{1}", key, message.ApplicationProperties[key]);
+                { 
                     msg.Properties[key] = (object)message.ApplicationProperties[key];
                 }
             }
@@ -307,26 +282,18 @@ namespace IotHub.OpenSdk
                     Target = new Target() { Address = cbsClientAddress }
                 };
 
-                ReceiverLink cbsReceiver = new ReceiverLink(session, "cbs-receiver", receiverAttach, null);
-                //var sasToken = GetSASToken(keyName, keyValue, string.Format("http://{0}/{1}", sbNamespace, entity), TimeSpan.FromMinutes(20));
+                ReceiverLink cbsReceiver = new ReceiverLink(session, "cbs-receiver", receiverAttach, null); 
                 var sasToken = this.sasToken.GetToken(new Uri(string.Format("http://{0}/{1}", sbNamespace + ".servicebus.windows.net", entity)));
-
-                //System.Diagnostics.Trace.WriteLine(System.Diagnostics.TraceLevel.Info, " sas token: {0}", sasToken);
-
-                // construct the put-token message
                 var request = new Message(sasToken);
                 request.Properties = new Properties();
                 request.Properties.MessageId = "1";
                 request.Properties.ReplyTo = cbsClientAddress;
                 request.ApplicationProperties = new ApplicationProperties();
                 request.ApplicationProperties["operation"] = "put-token";
-                request.ApplicationProperties["type"] = "servicebus.windows.net:sastoken";
-                //request.ApplicationProperties["name"] = string.Format("amqp://{0}/{1}", sbNamespace, entity);
+                request.ApplicationProperties["type"] = "servicebus.windows.net:sastoken"; 
                 request.ApplicationProperties["name"] = string.Format("amqp://{0}/{1}", sbNamespace + ".servicebus.windows.net", entity);
 
-                cbsSender.Send(request);
-
-                // receive the response
+                cbsSender.Send(request);  
                 var response = cbsReceiver.Receive();
                 if (response == null || response.Properties == null || response.ApplicationProperties == null)
                 {
@@ -337,9 +304,7 @@ namespace IotHub.OpenSdk
                 if (statusCode != (int)HttpStatusCode.Accepted && statusCode != (int)HttpStatusCode.OK)
                 {
                     throw new Exception("put-token message was not accepted. Error code: " + statusCode);
-                }
-
-                // the sender/receiver may be kept open for refreshing tokens
+                } 
                 cbsSender.Close();
                 cbsReceiver.Close();
                 session.Close();
