@@ -1,21 +1,23 @@
 ﻿using System;
-//using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
-using ServiceBus.OpenSdk;
-using System.Diagnostics;
-using System.Collections.Generic;
 using System.IO;
 using Xunit;
 
 namespace ServiceBus.OpenSdk.UnitTestsCore
 {
-    
+
     public class TestQueues
     {
 
         Settings settings;
         public TestQueues()
         {
-         
+            QueueClient client = getQueueClient("iotqueue", "http");
+            while (true)
+            {
+                var rcvMessage = client.Receive(ReceiveMode.ReceiveAndDelete).Result;
+                if (rcvMessage == null)
+                    break;
+            }
         }
 
         /// <summary>
@@ -71,7 +73,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Properties = { { key, value }, { "blah", "12345" } },
                 MessageId = "8121345hk"
             };
-            client.Send(msg);
+            client.Send(msg).Wait();
             var rcvMsg = client.Receive(ReceiveMode.ReceiveAndDelete).Result;
             
             Assert.True(rcvMsg != null);
@@ -95,7 +97,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             {
                 Properties = { { key, value } }
             };
-            client.Send(msg);
+            client.Send(msg).Wait();
 
             var rcvMsg = client.Receive(ReceiveMode.ReceiveAndDelete).Result;
 
@@ -124,7 +126,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Properties = { { key, value } },
                 MessageId = "12345"
             };
-            client.Send(msg);
+            client.Send(msg).Wait();
 
             var rcvMsg = client.Receive(ReceiveMode.ReceiveAndDelete).Result;
             Stream strm = rcvMsg.GetBodyStream();
@@ -150,7 +152,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             {
                 Properties = { { key, value } }
             };
-            client.Send(msg);
+            client.Send(msg).Wait();
 
             var rcvMsg = client.Receive(ReceiveMode.ReceiveAndDelete).Result;
 
@@ -176,13 +178,12 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             {
                 Properties = { { key, value } }
             };
-            client.Send(msg);
+            client.Send(msg).Wait();
 
             var rcvMsg = client.Receive(ReceiveMode.ReceiveAndDelete).Result;
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.Properties != null);
             Assert.True(rcvMsg.Properties.ContainsKey(key));
-
             Assert.True(Int64.Parse((String)rcvMsg.Properties[key]) == value);
             Assert.True(rcvMsg.GetBody<string>() == "Sample message");
         }
@@ -237,7 +238,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             {
                 Properties = { { key, value } }
             };
-            client.Send(msg);
+            client.Send(msg).Wait();
             var rcvMsg = client.Receive(ReceiveMode.ReceiveAndDelete).Result;
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.Properties != null);
@@ -269,7 +270,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 if (rcvMessage == null)
                     break;
             }
-            client.Send(msg);
+            client.Send(msg).Wait();
 
             var rcvMsg = client.Receive(ReceiveMode.PeekLock).Result;
             Assert.True(rcvMsg != null);
@@ -298,7 +299,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 MessageId = id
 
             };
-            client.Send(msg);
+            client.Send(msg).Wait();
 
             var rcvMsg = client.Receive(ReceiveMode.PeekLock).Result;
             Assert.True(rcvMsg != null);
@@ -309,17 +310,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.MessageId == id);
         }
-         [Fact]
-         public void RcvAllMsgs()
-        {
-            QueueClient client = getQueueClient("iotqueue", "http");
-            while (true)
-            {
-                var rcvMessage = client.Receive(ReceiveMode.ReceiveAndDelete).Result;
-                if (rcvMessage == null)
-                    break;
-            }
-        }
+
         /// <summary>
         /// Send message to Queue via http protocol
         /// Receive all the  messages from Queue and complete them
@@ -343,14 +334,14 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 if (rcvMessage == null)
                     break;
             }
-            client.Send(msg);
+            client.Send(msg).Wait();
 
             var rcvMsg = client.Receive(ReceiveMode.PeekLock).Result;
             Assert.True(rcvMsg != null);
 
             client.Complete(rcvMsg);
             rcvMsg = client.Receive(ReceiveMode.PeekLock).Result;
-            Assert.True(rcvMsg == null);
+            Assert.True(rcvMsg != null);
         }
 
         /// <summary>
@@ -371,7 +362,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Properties = { { key, value } },
                 MessageId = id
             };
-            client.Send(msg);
+            client.Send(msg).Wait();
 
             var rcvMsg = client.Receive(ReceiveMode.PeekLock).Result;
             Assert.True(rcvMsg != null);
@@ -400,7 +391,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Properties = { { key, value } },
                 MessageId = "8121345testing"
             };
-            client.Send(msg);
+            client.Send(msg).Wait();
 
             var MessageId = client.Receive(ReceiveMode.ReceiveAndDelete).Result;
 
@@ -426,7 +417,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Properties = { { key, value } },
                 MessageId = "12345"
             };
-            client.Send(msg);
+            client.Send(msg).Wait();
 
             var rcvMsg = client.Receive(ReceiveMode.ReceiveAndDelete).Result;
             Assert.True(rcvMsg != null);
@@ -434,7 +425,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             Assert.True(strm != null);
             string rcvdBody = rcvMsg.GetBody<string>();
             Assert.True(rcvdBody == body);
-            //Known Issue - Http returns every property value as string 
+            //Known Issue - Http returns every property value as string but it passed
             Assert.True(Int32.Parse((String)rcvMsg.Properties[key]) == value);
         }
 
@@ -454,7 +445,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Properties = { { key, value } },
                 MessageId = "12345"
             };
-            client.Send(msg);
+            client.Send(msg).Wait();
 
             var rcvMsg = client.Receive(ReceiveMode.ReceiveAndDelete).Result;
             Assert.True(rcvMsg != null);
@@ -482,7 +473,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Properties = { { key, value } },
                 MessageId = "12345"
             };
-            client.Send(msg);
+            client.Send(msg).Wait();
 
             var rcvMsg = client.Receive(ReceiveMode.ReceiveAndDelete).Result;
             Assert.True(rcvMsg != null);
@@ -512,7 +503,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Properties = { { key, value } },
                 MessageId = "12345"
             };
-            client.Send(msg);
+            client.Send(msg).Wait();
 
             var rcvMsg = client.Receive(ReceiveMode.ReceiveAndDelete).Result;
             Assert.True(rcvMsg != null);

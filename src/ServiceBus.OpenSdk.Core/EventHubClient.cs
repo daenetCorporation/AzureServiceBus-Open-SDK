@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ServiceBus.OpenSdk
+﻿namespace ServiceBus.OpenSdk
 {
     public class EventHubClient : MessagingClient
     {
         public EventHubClient(string sbnamespace, string entityPath,
            TokenProvider tokenProvider, string protocol) :
             base(sbnamespace, entityPath, tokenProvider, protocol)
-        {
-            //this.BaseAddress = new Uri(this.BaseAddress.AbsoluteUri + entityPath);
+        {                                                                          
         }
 
         public static EventHubClient FromConnectionString(string connStr)

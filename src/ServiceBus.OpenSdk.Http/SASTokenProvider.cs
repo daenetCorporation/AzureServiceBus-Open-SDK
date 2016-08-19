@@ -1,15 +1,6 @@
-﻿// 
-//  (c) Microsoft Corporation. See LICENSE.TXT file for licensing details
-//  
-
-// #undef MF_FRAMEWORK_VERSION_V4_2 // Contains NET MF4.2 specific code
-
-namespace Microsoft.ServiceBus.Micro
+﻿namespace Microsoft.ServiceBus.Micro
 {
     using System;
-    using System.Collections;
-    using System.IO;
-    using System.Net;
     using System.Text;
     using ElzeKool;
 
@@ -36,11 +27,6 @@ namespace Microsoft.ServiceBus.Micro
 
             var hmac = SHA.computeHMAC_SHA256(Encoding.UTF8.GetBytes(this.keySecret), Encoding.UTF8.GetBytes(stringToSign));
             string signatureString = Convert.ToBase64String(hmac);
-
-#if MF_FRAMEWORK_VERSION_V4_2
-            // Adjust for .NET MF 4.2 character set difference
-            signatureString = Base64NetMf42ToRfc4648(signatureString);
-#endif
 
             var tokenAndExpiration = new TokenAndExpiration();
 

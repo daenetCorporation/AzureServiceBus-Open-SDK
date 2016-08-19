@@ -1,13 +1,8 @@
-// 
-//  (c) Microsoft Corporation. See LICENSE.TXT file for licensing details
-//  
 namespace Microsoft.ServiceBus.Micro
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.IO;
-    using System.Net;
     using System.Net.Http.Headers;
 
     public class BrokeredMessage

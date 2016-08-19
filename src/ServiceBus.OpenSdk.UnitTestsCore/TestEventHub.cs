@@ -1,23 +1,13 @@
-﻿using ServiceBus.OpenSdk;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 
 namespace ServiceBus.OpenSdk.UnitTestsCore
-{ 
+{
     public class TestEventHub
     {
-        //TODO..
-        //Test1 - Send message to EventHub using HTTP
-        //Test2 - Send message to EventHub using AMQP
-
         Settings settings;
         public TestEventHub()
         {
-
+                 
          
         }
 
@@ -29,7 +19,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         /// <returns></returns>
         private EventHubClient getEventHubClient(string eventHubName, string protocol)
         {
-            return EventHubClient.FromConnectionString(Settings.EndPoint, protocol);
+            return EventHubClient.FromConnectionString(Settings.EndPoint,eventHubName, protocol);
         }
 
         /// <summary>
@@ -47,7 +37,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Properties = { { key, value } }
             };
 
-            eventHubClient.Send(msg);
+            eventHubClient.Send(msg).Wait();
         }
 
         /// <summary>
@@ -65,7 +55,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Properties = { { key, value } }
             };
 
-            eventHubClient.Send(msg);
+            eventHubClient.Send(msg).Wait();
         }
 
     }

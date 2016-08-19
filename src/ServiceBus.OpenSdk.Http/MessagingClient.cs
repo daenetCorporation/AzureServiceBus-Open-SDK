@@ -1,8 +1,3 @@
-//#define CERTS
-
-// 
-//  (c) Microsoft Corporation. See LICENSE.TXT file for licensing details
-//  
 namespace Microsoft.ServiceBus.Micro
 {
     using global::ServiceBus.OpenSdk;
@@ -11,29 +6,18 @@ namespace Microsoft.ServiceBus.Micro
     using System.Net;
     using System.Net.Http;
     using System.Runtime.Serialization.Json;
-    using System.Threading.Tasks;
-
-    //  using Microsoft.SPOT.Net.Security;
+    using System.Threading.Tasks;          
 
     public class MessagingClient
     {
-#if CERTS
-        static X509Certificate[] caCerts;
-#endif
+
         readonly Uri m_BaseAddress;
         readonly TokenProvider tokenProvider;
         private string m_EntityPath;
 
         static MessagingClient()
         {
-#if CERTS
-            caCerts = new[]
-                          {
-                              new X509Certificate(Resources.GetBytes(Resources.BinaryResources.gte)),
-                              new X509Certificate(Resources.GetBytes(Resources.BinaryResources.mia)),
-                              new X509Certificate(Resources.GetBytes(Resources.BinaryResources.mssi))
-                          };
-#endif
+
         }
 
         public MessagingClient(string sbnamespace, string entityPath, TokenProvider tokenProvider)
@@ -59,10 +43,6 @@ namespace Microsoft.ServiceBus.Micro
         {
             HttpClient httpClient = getClient();
 
-            //var wq = this.CreateReceiveRequest(timeout);
-            //wq.Method = "POST";
-            //wq.Headers.Add("Date", DateTime.UtcNow.ToString("R"));
-            //wq.ContentLength = 0;
             try
             {
                 HttpContent c = new StringContent("");
@@ -110,10 +90,7 @@ namespace Microsoft.ServiceBus.Micro
         {
 
             HttpClient httpClient = getClient();
-            // wq.Method = "DELETE";
-            //wq.Headers.Add("Date", DateTime.UtcNow.ToString("R"));
-            //this.PreprocessRequest(wq);
-            //wq.ContentLength = 0;
+
             var wq = await httpClient.DeleteAsync(this.m_BaseAddress.AbsoluteUri + "/messages/head?timeout=" + (timeout.Ticks / TimeSpan.TicksPerSecond));
             try
             {
@@ -156,7 +133,6 @@ namespace Microsoft.ServiceBus.Micro
         {
             if (client.BaseAddress.Scheme == "http")
             {
-                // content.Headers.Add("Endpoint", content.RequestUri.Host + ":" + (wq.RequestUri.Port == -1 ? 80 : wq.RequestUri.Port));
                 this.tokenProvider.SignRequest(client, content);
             }
         }
@@ -167,8 +143,7 @@ namespace Microsoft.ServiceBus.Micro
             
             HttpContent content;
             if (message.GetBody<Stream>() != null)
-            {
-                // DataContractJsonSerializer ser = new DataContractJsonSerializer()
+            {  
                 content = new StreamContent(message.GetBody<Stream>());
             }
             else if (message.GetBody<object>() != null)
@@ -243,8 +218,7 @@ namespace Microsoft.ServiceBus.Micro
             catch (WebException we)
             {
                 if (we.Response != null)
-                {
-                    // we.Response.Close();
+                {                           
                 }
                 throw;
             }
@@ -253,8 +227,7 @@ namespace Microsoft.ServiceBus.Micro
         public async void Complete(Uri messageLockUri)
         {
             HttpClient httpClient = new HttpClient();
-            HttpContent content = new StringContent("");
-            //var wq = this.CreateLockRequest("DELETE", messageLockUri);
+            HttpContent content = new StringContent("");                   
             httpClient.DefaultRequestHeaders.Add("Date", DateTime.UtcNow.ToString("R"));
             httpClient.DefaultRequestHeaders.Add("Authorization", this.tokenProvider.GetToken(this.m_BaseAddress));
             this.PreprocessRequest(httpClient, content);
@@ -271,8 +244,7 @@ namespace Microsoft.ServiceBus.Micro
             catch (WebException we)
             {
                 if (we.Response != null)
-                {
-                    //  we.Response.Close();
+                {                           
                 }
                 throw;
             }
@@ -281,8 +253,7 @@ namespace Microsoft.ServiceBus.Micro
         public async void Abandon(Uri messageLockUri)
         {
             HttpClient httpClient = new HttpClient();
-            HttpContent content = new StringContent("");
-            // var wq = this.CreateLockRequest("PUT", messageLockUri);
+            HttpContent content = new StringContent("");               
             httpClient.DefaultRequestHeaders.Add("Date", DateTime.UtcNow.ToString("R"));
             httpClient.DefaultRequestHeaders.Add("Authorization", this.tokenProvider.GetToken(this.m_BaseAddress));
             this.PreprocessRequest(httpClient, content);
@@ -300,49 +271,10 @@ namespace Microsoft.ServiceBus.Micro
             catch (WebException we)
             {
                 if (we.Response != null)
-                {
-                    // we.Response.Close();
+                {                          
                 }
                 throw;
             }
         }
-
-        //HttpWebRequest CreateSendRequest()
-        //{
-        //    var requestUriString = this.entityAddress.AbsoluteUri + "/messages";
-        //    var wq = (HttpWebRequest) WebRequest.Create(requestUriString);
-        //    wq.ProtocolVersion = HttpVersion.Version11;
-        //    wq.KeepAlive = true;
-        //    if (wq.RequestUri.Scheme == "https")
-        //    {
-        //        wq.Headers.Add("Authorization", this.tokenProvider.GetToken(this.entityAddress));
-        //    }
-        //    return wq;
-        //}
-
-        //HttpClient CreateReceiveRequest(TimeSpan timeout)
-        //{
-        //     var wq = (HttpWebRequest) WebRequest.Create(this.entityAddress.AbsoluteUri + "/messages/head?timeout=" + (timeout.Ticks/TimeSpan.TicksPerSecond));
-        //    wq.ProtocolVersion = HttpVersion.Version11;
-        //    wq.KeepAlive = true;
-        //    if (wq.RequestUri.Scheme == "https")
-        //    {
-        //        wq.Headers.Add("Authorization", this.tokenProvider.GetToken(this.entityAddress));
-        //    }
-        //    return wq;
-        //}
-
-        //HttpWebRequest CreateLockRequest(string method, Uri lockUri)
-        //{
-        //    var wq = (HttpWebRequest) WebRequest.Create(lockUri);
-        //    wq.ProtocolVersion = HttpVersion.Version11;
-        //    wq.KeepAlive = true;
-        //    wq.Method = method;
-        //    if (wq.RequestUri.Scheme == "https")
-        //    {
-        //        wq.Headers.Add("Authorization", this.tokenProvider.GetToken(this.entityAddress));
-        //    }
-        //    return wq;
-        //}
     }
 }

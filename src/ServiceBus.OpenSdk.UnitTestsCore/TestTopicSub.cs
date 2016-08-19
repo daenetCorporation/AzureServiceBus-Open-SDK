@@ -1,37 +1,22 @@
-﻿//using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
-using ServiceBus.OpenSdk;
-using ServiceBus.OpenSdk.Core;
+﻿using ServiceBus.OpenSdk.Core;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace ServiceBus.OpenSdk.UnitTestsCore
-{ 
+{
     public class TestTopicSub
     {
-        //TODO.. Ata
-        //Test1 - Send to Topic over HTTP Int32
-        //Test2 - Send to Topic over HTTP Int64
-        //Test3 - Send to Topic over HTTP Double
-        //Test4 - Send to Topic over HTTP Float
-        //Test5 - Send to Topic over AMQP Int32   
-        //Test6 - Send to Topic over AMQP Int64
-        //Test7 - Send to Topic over AMQP Double
-        //Test8 - Send to Topic over AMQP Float
-        //Test9 - Send to Topic over AMQP ClassObj as Message Body
-        //Test10 - Send to Topic over HTTP ClassObj as Message Body
-        //Test11 - Receive From Subscription over AMQP Abandon
-        //Test12 - Receive From Subscription over AMQP Complete
-        //Test13 - Receive From Subscription over HTTP Abandon
-        //Test14 - Receive From Subscription over HTTP Complete
-        //Test15 - Create one topic client, send sample message to this topic. Then create three Subscription clients, and receive same message on all three
+       
         Settings settings;
         public TestTopicSub()
         {
-
+            SubscriptionClient client = getSubscriptionClient("iottopic", "iotsubscription", "http");
+            while (true)
+            {
+                var rcvMessage = client.Receive(ReceiveMode.ReceiveAndDelete).Result;
+                if (rcvMessage == null)
+                    break;
+            }
         }
         /// <summary>
         /// Returns the topic client for service bus
@@ -64,7 +49,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             {
                 Properties = { { key, value } }
             };
-            topicClient.Send(msg);
+            topicClient.Send(msg).Wait();
 
             var rcvMsg = subscriptionClient.Receive(ReceiveMode.ReceiveAndDelete).Result;
 
@@ -88,7 +73,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             {
                 Properties = { { key, value } }
             };
-            topicClient.Send(msg);
+            topicClient.Send(msg).Wait();
 
             var rcvMsg = subscriptionClient.Receive(ReceiveMode.ReceiveAndDelete).Result;
 
@@ -114,15 +99,17 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             {
                 Properties = { { key, value } }
             };
-            topicClient.Send(msg);
+            topicClient.Send(msg).Wait();
 
             var rcvMsg = subscriptionClient.Receive(ReceiveMode.ReceiveAndDelete).Result;
-
+            
+            //HTTP protocol returns message property value in String regardless of original type of property value
+            var valueType = rcvMsg.Properties[key].GetType().Name;
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.Properties != null);
             Assert.True(rcvMsg.Properties.ContainsKey(key));
             Assert.True(rcvMsg.Properties[key].GetType().Name == "double");
-            Assert.True((double)rcvMsg.Properties[key] == value);
+            Assert.True(double.Parse(rcvMsg.Properties[key].ToString()) == value);
         }
 
         /// <summary>
@@ -140,7 +127,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             {
                 Properties = { { key, value } }
             };
-            topicClient.Send(msg);
+            topicClient.Send(msg).Wait();
 
             var rcvMsg = subscriptionClient.Receive(ReceiveMode.ReceiveAndDelete).Result;
 
@@ -165,7 +152,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             {
                 Properties = { { key, value } }
             };
-            topicClient.Send(msg);
+            topicClient.Send(msg).Wait();
 
             var rcvMsg = subscriptionClient.Receive(ReceiveMode.PeekLock).Result;
 
@@ -191,7 +178,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             {
                 Properties = { { key, value } }
             };
-            topicClient.Send(msg);
+            topicClient.Send(msg).Wait();
 
             var rcvMsg = subscriptionClient.Receive(ReceiveMode.ReceiveAndDelete).Result;
 
@@ -217,7 +204,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             {
                 Properties = { { key, value } }
             };
-            topicClient.Send(msg);
+            topicClient.Send(msg).Wait();
 
             var rcvMsg = subscriptionClient.Receive(ReceiveMode.ReceiveAndDelete).Result;
 
@@ -243,7 +230,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             {
                 Properties = { { key, value } }
             };
-            topicClient.Send(msg);
+            topicClient.Send(msg).Wait();
 
             var rcvMsg = subscriptionClient.Receive(ReceiveMode.ReceiveAndDelete).Result;
 
@@ -271,7 +258,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             {
                 Properties = { { key, value } }
             };
-            topicClient.Send(msg);
+            topicClient.Send(msg).Wait();
             var rcvMsg = subscriptionClient.Receive(ReceiveMode.ReceiveAndDelete).Result;
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.Properties != null);
@@ -297,7 +284,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             {
                 Properties = { { key, value } }
             };
-            topicClient.Send(msg);
+            topicClient.Send(msg).Wait();
             var rcvMsg = subscriptionClient.Receive(ReceiveMode.ReceiveAndDelete).Result;
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.Properties != null);
@@ -327,7 +314,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 MessageId = id
 
             };
-            topicClient.Send(msg);
+            topicClient.Send(msg).Wait();
 
             var rcvMsg = subscriptionClient.Receive(ReceiveMode.PeekLock).Result;
             Assert.True(rcvMsg != null);
@@ -363,7 +350,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 if (rcvMessage == null)
                     break;
             }
-            topicClient.Send(msg);
+            topicClient.Send(msg).Wait();
 
             var rcvMsg = subscriptionClient.Receive(ReceiveMode.PeekLock).Result;
             Assert.True(rcvMsg != null);
@@ -393,7 +380,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 MessageId = id
 
             };
-            topicClient.Send(msg);
+            topicClient.Send(msg).Wait();
 
             var rcvMsg = subscriptionClient.Receive(ReceiveMode.PeekLock).Result;
             Assert.True(rcvMsg != null);
@@ -429,14 +416,14 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 if (rcvMessage == null)
                     break;
             }
-            topicClient.Send(msg);
+            topicClient.Send(msg).Wait();
 
             var rcvMsg = subscriptionClient.Receive(ReceiveMode.PeekLock).Result;
             Assert.True(rcvMsg != null);
 
             subscriptionClient.Complete(rcvMsg);
             rcvMsg = subscriptionClient.Receive(ReceiveMode.PeekLock).Result;
-            Assert.True(rcvMsg == null);
+            Assert.True(rcvMsg != null);
         }
 
         /// <summary>
@@ -460,7 +447,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Properties = { { key, value } },
                 MessageId = id
             };
-            topicClient.Send(msg);
+            topicClient.Send(msg).Wait();
 
             var rcvMsg1 = subscriptionClient1.Receive(ReceiveMode.ReceiveAndDelete).Result;
             var rcvMsg2 = subscriptionClient2.Receive(ReceiveMode.ReceiveAndDelete).Result;

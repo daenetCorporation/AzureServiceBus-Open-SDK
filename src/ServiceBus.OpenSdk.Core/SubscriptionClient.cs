@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ServiceBus.OpenSdk.Core
+﻿namespace ServiceBus.OpenSdk.Core
 {
     public class SubscriptionClient : MessagingClient
     {
