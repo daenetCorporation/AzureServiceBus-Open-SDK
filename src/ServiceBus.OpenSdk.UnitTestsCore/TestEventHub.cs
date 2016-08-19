@@ -20,6 +20,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
 
          
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -30,6 +31,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         {
             return EventHubClient.FromConnectionString(Settings.EndPoint, protocol);
         }
+
         /// <summary>
         /// Send message to evethub via http protocol 
         /// </summary>
