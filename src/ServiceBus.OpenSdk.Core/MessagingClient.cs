@@ -1,6 +1,6 @@
 namespace ServiceBus.OpenSdk
 {
-    using IotHub.OpenSdk;
+    //using IotHub.OpenSdk;
     using System;
     using System.Reflection;
     using System.Collections.Generic;
@@ -70,7 +70,7 @@ namespace ServiceBus.OpenSdk
                 AssemblyName asmName = new AssemblyName("ServiceBus.OpenSdk.Http");   
                 var asm = Assembly.Load(asmName);
 
-                var itransportType = asm.GetType("IotHub.OpenSdk.HttpTransport");
+                var itransportType = asm.GetType("ServiceBus.OpenSdk.HttpTransport");
                 IIotTransport transportInstance = Activator.CreateInstance(itransportType, args) as IIotTransport;
                 return transportInstance;
             }
@@ -78,7 +78,7 @@ namespace ServiceBus.OpenSdk
             {
                 AssemblyName asmName = new AssemblyName("ServiceBus.OpenSdk.Amqp");  
                 var asm = Assembly.Load(asmName);
-                var itransportType = asm.GetType("IotHub.OpenSdk.AmqpTransport");
+                var itransportType = asm.GetType("ServiceBus.OpenSdk.AmqpTransport");
                 IIotTransport transportInstance = Activator.CreateInstance(itransportType, args) as IIotTransport;
                 return transportInstance;
             }
@@ -100,7 +100,7 @@ namespace ServiceBus.OpenSdk
 
         public async Task<Message> Receive(ReceiveMode receiveMode = ReceiveMode.ReceiveAndDelete, long sequenceNumber = 0)
         {
-            return await Receive(TimeSpan.FromSeconds(30), receiveMode, sequenceNumber);
+            return await Receive(TimeSpan.FromSeconds(10), receiveMode, sequenceNumber);
         }
 
 

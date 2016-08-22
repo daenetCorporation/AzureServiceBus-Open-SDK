@@ -1,4 +1,4 @@
-﻿namespace IotHub.OpenSdk.Core
+﻿namespace ServiceBus.OpenSdk
 {
     public enum MessageState
     {

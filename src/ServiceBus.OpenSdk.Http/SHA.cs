@@ -1,4 +1,4 @@
-namespace ElzeKool
+namespace ServiceBus.OpenSdk
 {
     using System;
 

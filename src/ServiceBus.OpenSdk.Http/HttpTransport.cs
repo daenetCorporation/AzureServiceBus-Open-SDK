@@ -1,4 +1,4 @@
-namespace IotHub.OpenSdk
+namespace ServiceBus.OpenSdk
 {                                         
     using System;
     using System.IO;

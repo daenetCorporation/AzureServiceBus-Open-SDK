@@ -1,8 +1,8 @@
-﻿namespace Microsoft.ServiceBus.Micro
+﻿namespace ServiceBus.OpenSdk
 {
     using System;
     using System.Text;
-    using ElzeKool;
+    //using ElzeKool;
 
     public class SASTokenProvider : TokenProvider
     {

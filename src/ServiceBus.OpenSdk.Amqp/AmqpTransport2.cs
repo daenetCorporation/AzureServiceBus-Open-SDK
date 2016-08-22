@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace IotHub.OpenSdk
+namespace ServiceBus.OpenSdk
 {
-    public class AmqpTransport : IotHub.OpenSdk.IIotTransport
+    public class AmqpTransport : ServiceBus.OpenSdk.IIotTransport
     {
 
         private string sbNamespace;
@@ -82,13 +82,13 @@ namespace IotHub.OpenSdk
         public async Task Abandon(ServiceBus.OpenSdk.Message message)
         {
 
-            receiver.Release((Message)message.amqpMessage);
+            receiver.Release((Amqp.Message)message.amqpMessage);
         }
 
 
         public async Task Complete(ServiceBus.OpenSdk.Message message)
         {
-            receiver.Accept((Message)message.amqpMessage);
+            receiver.Accept((Amqp.Message)message.amqpMessage);
         }
 
         public async Task<ServiceBus.OpenSdk.Message> Receive(ServiceBus.OpenSdk.ReceiveOptions receiveOptions)
@@ -154,9 +154,9 @@ namespace IotHub.OpenSdk
         /// </summary>
         /// <param name="msg"></param>
         /// <returns></returns>
-        private Message map(ServiceBus.OpenSdk.Message msg)
+        private Amqp.Message map(ServiceBus.OpenSdk.Message msg)
         {
-            Amqp.Message message = new Message(msg.GetBody<object>());
+            Amqp.Message message = new Amqp.Message(msg.GetBody<object>());
             message.Properties = new Amqp.Framing.Properties();
             message.Header = new Amqp.Framing.Header();
             message.ApplicationProperties = new ApplicationProperties();
@@ -284,7 +284,7 @@ namespace IotHub.OpenSdk
 
                 ReceiverLink cbsReceiver = new ReceiverLink(session, "cbs-receiver", receiverAttach, null); 
                 var sasToken = this.sasToken.GetToken(new Uri(string.Format("http://{0}/{1}", sbNamespace + ".servicebus.windows.net", entity)));
-                var request = new Message(sasToken);
+                var request = new Amqp.Message(sasToken);
                 request.Properties = new Properties();
                 request.Properties.MessageId = "1";
                 request.Properties.ReplyTo = cbsClientAddress;

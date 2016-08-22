@@ -1,4 +1,4 @@
-﻿namespace ServiceBus.OpenSdk.Core
+﻿namespace ServiceBus.OpenSdk
 {
     public class Class1
     {
