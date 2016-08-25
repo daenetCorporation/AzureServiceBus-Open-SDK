@@ -9,16 +9,15 @@
 // KIND, EITHER EXPRESS OR IMPLIED. SEE THE LICENSE FOR THE SPECIFIC LANGUAGE GOVERNING
 // PERMISSIONS AND LIMITATIONS UNDER THE LICENSE.
 //=======================================================================================
-
-using System.Runtime.Serialization;
-
-namespace ServiceBus.OpenSdk.UnitTestsCore
+namespace ServiceBus.OpenSdk.EnvironmentSetup
 {
-   
-    public class TestClass
+    class Program
     {
-        public TestClass()
+        private static string ConnectionString = "Endpoint=sb://iotlabcore.servicebus.windows.net/;SharedAccessKeyName=iotLabCore;SharedAccessKey=QbH/yR4rUHa80Lmiz7oCVl0bBIEclfMBZ/luFkQv0sA=";
+        static void Main(string[] args)
         {
+            QueueSetup.CreateQueue(17, ConnectionString);
+
         }
     }
 }

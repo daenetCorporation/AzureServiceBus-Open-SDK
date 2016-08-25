@@ -1,4 +1,14 @@
-﻿using ServiceBus.OpenSdk;
+﻿//=======================================================================================
+// Copyright © daenet GmbH Frankfurt am Main
+//
+// LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE"); YOU MAY NOT USE THESE
+// FILES EXCEPT IN COMPLIANCE WITH THE LICENSE. YOU MAY OBTAIN A COPY OF THE LICENSE AT
+// http://www.apache.org/licenses/LICENSE-2.0
+// UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING, SOFTWARE DISTRIBUTED UNDER THE
+// LICENSE IS DISTRIBUTED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, EITHER EXPRESS OR IMPLIED. SEE THE LICENSE FOR THE SPECIFIC LANGUAGE GOVERNING
+// PERMISSIONS AND LIMITATIONS UNDER THE LICENSE.
+//=======================================================================================
 using System;
 using Xunit;
 
@@ -13,13 +23,13 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         Settings settings;
         public TestTopicSub()
         {
-            SubscriptionClient client = getSubscriptionClient("iottopic", "iotsubscription", "http");
-            while (true)
-            {
-                var rcvMessage = client.Receive(ReceiveMode.ReceiveAndDelete).Result;
-                if (rcvMessage == null)
-                    break;
-            }
+        //    SubscriptionClient client = getSubscriptionClient("iottopic", "iotsubscription", "http");
+        //    while (true)
+        //    {
+        //        var rcvMessage = client.Receive(ReceiveMode.ReceiveAndDelete).Result;
+        //        if (rcvMessage == null)
+        //            break;
+        //    }
         }
         /// <summary>
         /// Returns the topic client for service bus
@@ -71,7 +81,8 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             topicClient = getTopicClient("iottopic", "http");
             subscriptionClient = getSubscriptionClient("iottopic", "iotsubscription", "http");
             string key = "test";
-            Int64 value = 12345;
+            //Int64 value = 12345;
+            long value = 1111133111111112345L;
             Message msg = new Message("Sample message")
             {
                 Properties = { { key, value } }
@@ -84,7 +95,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             Assert.True(rcvMsg.Properties != null);
             Assert.True(rcvMsg.Properties.ContainsKey(key));
 
-            Assert.True(Int64.Parse((String)rcvMsg.Properties[key]) == value);
+            Assert.True(long.Parse((String)rcvMsg.Properties[key]) == value);
         }
         /// <summary>
         /// Send message to Topic via http protocol
@@ -176,7 +187,8 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             topicClient = getTopicClient("iottopic", "amqp");
             subscriptionClient = getSubscriptionClient("iottopic", "iotsubscription", "amqp");
             string key = "test";
-            Int64 value = 12345;
+            //Int64 value = 12345;
+            long value = 1111133111111112345L;
             Message msg = new Message("Sample message")
             {
                 Properties = { { key, value } }
@@ -189,7 +201,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             Assert.True(rcvMsg.Properties != null);
             Assert.True(rcvMsg.Properties.ContainsKey(key));
             Assert.True(rcvMsg.Properties[key].GetType().Name == "Int64");
-            Assert.True((Int64)rcvMsg.Properties[key] == value);
+            Assert.True((long)rcvMsg.Properties[key] == value);
         }
 
         /// <summary>
@@ -255,7 +267,8 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             topicClient = getTopicClient("iottopic", "amqp");
             subscriptionClient = getSubscriptionClient("iottopic", "iotsubscription", "amqp");
             string key = "test";
-            Int64 value = 12345;
+            //Int64 value = 12345;
+            long value = 1111133111111112345L;
             TestClass cls = new TestClass();
             Message msg = new Message(cls)
             {
@@ -267,7 +280,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             Assert.True(rcvMsg.Properties != null);
             Assert.True(rcvMsg.Properties.ContainsKey(key));
 
-            Assert.True((Int64)rcvMsg.Properties[key] == value);
+            Assert.True((long)rcvMsg.Properties[key] == value);
             Assert.True(rcvMsg.GetBody<TestClass>() != null);
         }
         /// <summary>
@@ -281,7 +294,8 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             topicClient = getTopicClient("iottopic", "http");
             subscriptionClient = getSubscriptionClient("iottopic", "iotsubscription", "http");
             string key = "test";
-            Int64 value = 12345;
+            // Int64 value = 12345;
+            long value = 1111133111111112345L;
             TestClass cls = new TestClass();
             Message msg = new Message(cls)
             {
@@ -293,7 +307,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             Assert.True(rcvMsg.Properties != null);
             Assert.True(rcvMsg.Properties.ContainsKey(key));
 
-            Assert.True((Int64)rcvMsg.Properties[key] == value);
+            Assert.True((long)rcvMsg.Properties[key] == value);
             Assert.True(rcvMsg.GetBody<TestClass>() != null);
         }
 
@@ -376,7 +390,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             topicClient = getTopicClient("iottopic", "http");
             subscriptionClient = getSubscriptionClient("iottopic", "iotsubscription", "http");
             String key = "test";
-            Int64 value = 12345;
+            int value = 12345;
             String id = "myId";
             Message msg = new Message("Sample Message")
             {
@@ -408,26 +422,22 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
 
             topicClient = getTopicClient("iottopic", "http");
             subscriptionClient = getSubscriptionClient("iottopic", "iotsubscription", "http");
-            Int64 value = 12345;
+            //Int64 value = 12345;
+            long value = 1111133111111112345L;
             String key = "test";
             Message msg = new Message("Sample Message")
             {
                 Properties = { { key, value } }
             };
-            //while (true)
-            //{
-            //    var rcvMessage = subscriptionClient.Receive(ReceiveMode.ReceiveAndDelete).Result;
-            //    if (rcvMessage == null)
-            //        break;
-            //}
+           
             topicClient.Send(msg).Wait();
 
             var rcvMsg = subscriptionClient.Receive(ReceiveMode.PeekLock).Result;
             Assert.True(rcvMsg != null);
 
             subscriptionClient.Complete(rcvMsg);
-            rcvMsg = subscriptionClient.Receive(ReceiveMode.PeekLock).Result;
-            Assert.True(rcvMsg != null);
+           var rcvMsg1 = subscriptionClient.Receive(ReceiveMode.PeekLock).Result;
+            Assert.True(rcvMsg1 == null);
         }
 
         /// <summary>

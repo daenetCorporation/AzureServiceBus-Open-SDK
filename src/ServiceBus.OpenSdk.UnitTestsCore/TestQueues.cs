@@ -1,4 +1,16 @@
-﻿using System;
+﻿//=======================================================================================
+// Copyright © daenet GmbH Frankfurt am Main
+//
+// LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE"); YOU MAY NOT USE THESE
+// FILES EXCEPT IN COMPLIANCE WITH THE LICENSE. YOU MAY OBTAIN A COPY OF THE LICENSE AT
+// http://www.apache.org/licenses/LICENSE-2.0
+// UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING, SOFTWARE DISTRIBUTED UNDER THE
+// LICENSE IS DISTRIBUTED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, EITHER EXPRESS OR IMPLIED. SEE THE LICENSE FOR THE SPECIFIC LANGUAGE GOVERNING
+// PERMISSIONS AND LIMITATIONS UNDER THE LICENSE.
+//=======================================================================================
+
+using System;
 using System.IO;
 using Xunit;
 
@@ -8,16 +20,11 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
     public class TestQueues
     {
         private QueueClient client;
-        Settings settings;
+        private Settings settings;
+
         public TestQueues()
         {
-            client = getQueueClient("iotqueue", "http");
-            while (true)
-            {
-                var rcvMessage = client.Receive(ReceiveMode.ReceiveAndDelete).Result;
-                if (rcvMessage == null)
-                    break;
-            }
+            
         }
 
         /// <summary>
@@ -39,7 +46,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingAmqp_Int32()
         {
-            client = getQueueClient("iotqueue", "amqp");
+            client = getQueueClient(Settings.Queue0, "amqp");
             string key = "test";
             int value = 12345;
             Message msg = new Message("Sample message")
@@ -47,14 +54,15 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Properties = { { key, value } }
             };
             client.Send(msg).Wait();
-
+ 
             var rcvMsg = client.Receive(ReceiveMode.ReceiveAndDelete).Result;
             Stream strm = rcvMsg.GetBodyStream();
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.Properties != null);
             Assert.True(rcvMsg.Properties.ContainsKey(key));
             Assert.True(rcvMsg.Properties[key].GetType().Name == "Int32");
-            Assert.True((Int32)rcvMsg.Properties[key] == value);
+            Assert.True((int)rcvMsg.Properties[key] == value);
+           
         }
 
         /// <summary>
@@ -64,7 +72,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingAmqp_Double()
         {
-            client = getQueueClient("iotqueue", "amqp");
+            client = getQueueClient(Settings.Queue1, "amqp");
             string key = "test";
             double value = 12345.0;
 
@@ -90,7 +98,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingAmqp_Float()
         {
-            client = getQueueClient("iotqueue", "amqp");
+            client = getQueueClient(Settings.Queue2, "amqp");
             string key = "test";
             float value = 12345.89f;
             Message msg = new Message("Sample message")
@@ -117,7 +125,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingHttp_Int32()
         {
-            client = getQueueClient("iotqueue", "http");
+            client = getQueueClient(Settings.Queue3, "http");
             string key = "test";
             int value = 12345;
 
@@ -134,7 +142,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             Assert.True(rcvMsg.Properties != null);
             Assert.True(rcvMsg.Properties.ContainsKey(key));
             //Known Issue - Http returns every property value as string 
-            Assert.True(Int32.Parse((String)rcvMsg.Properties[key]) == value);
+            Assert.True(int.Parse((String)rcvMsg.Properties[key]) == value);
         }
 
         /// <summary>
@@ -144,7 +152,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingAmqp_Int64()
         {
-            client = getQueueClient("iotqueue", "amqp");
+            client = getQueueClient(Settings.Queue4, "amqp");
             string key = "test";
             // Int64 value = 123456789;
             long value = 4294967296L;
@@ -171,7 +179,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingHttp_Int64()
         {
-            client = getQueueClient("iotqueue", "http");
+            client = getQueueClient(Settings.Queue5, "http");
             string key = "test";
             long value = 1111133111111112345L;
             Message msg = new Message("Sample message")
@@ -197,9 +205,9 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingAmqp_ClsObj()
         {
-            client = getQueueClient("iotqueue", "amqp");
+            client = getQueueClient(Settings.Queue6, "amqp");
             string key = "test";
-            Int64 value = 12345;
+            Int64 value = 12345L;
             TestClass cls = new TestClass();
             Message msg = new Message("abc")
             {
@@ -231,9 +239,9 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingHttp_ClsObj()
         {
-            client = getQueueClient("iotqueue", "http");
+            client = getQueueClient(Settings.Queue7, "http");
             String key = "test";
-            Int64 value = 12345;
+            Int64 value = 12345L;
             Message msg = new Message(new TestClass())
             {
                 Properties = { { key, value } }
@@ -257,19 +265,14 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void RcvCompleteFromQueueUsingAmqp()
         {
-            client = getQueueClient("iotqueue", "amqp");
-            Int64 value = 12345;
+            client = getQueueClient(Settings.Queue8, "amqp");
+            Int64 value = 12345L;
             String key = "test";
             Message msg = new Message("Sample Message")
             {
                 Properties = { { key, value } }
             };
-            while (true)
-            {
-                var rcvMessage = client.Receive(ReceiveMode.ReceiveAndDelete).Result;
-                if (rcvMessage == null)
-                    break;
-            }
+            
             client.Send(msg).Wait();
 
             var rcvMsg = client.Receive(ReceiveMode.PeekLock).Result;
@@ -289,9 +292,9 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void RcvAbandonFromQueueUsingAmqp()
         {
-            client = getQueueClient("iotqueue", "amqp");
+            client = getQueueClient(Settings.Queue9, "amqp");
             String key = "test";
-            Int64 value = 12345;
+            Int64 value = 12345L;
             String id = "myId";
             Message msg = new Message("Sample Message")
             {
@@ -309,6 +312,8 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             rcvMsg = client.Receive(ReceiveMode.PeekLock).Result;
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.MessageId == id);
+            client.Complete(rcvMsg);
+            
         }
 
         /// <summary>
@@ -320,20 +325,13 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void RcvCompleteFromQueueUsingHttp()
         {
-            client = getQueueClient("iotqueue", "http");
+            client = getQueueClient(Settings.Queue10.ToString(), "http");
             String key = "test";
-            Int64 value = 12345;
+            Int64 value = 12345L;
             Message msg = new Message("Sample Message")
             {
                 Properties = { { key, value } }
             };
-
-            //while (true)
-            //{
-            //    var rcvMessage = client.Receive(ReceiveMode.ReceiveAndDelete).Result;
-            //    if (rcvMessage == null)
-            //        break;
-            //}
             client.Send(msg).Wait();
 
             var rcvMsg = client.Receive(ReceiveMode.PeekLock).Result;
@@ -353,8 +351,8 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void RcvAbandonFromQueueUsingHttp()
         {
-            client = getQueueClient("iotqueue", "http");
-            Int64 value = 12345;
+            client = getQueueClient(Settings.Queue11, "http");
+            Int64 value = 12345L;
             String key = "value";
             string id = "myId";
             Message msg = new Message("Sample Message")
@@ -372,6 +370,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             rcvMsg = client.Receive(ReceiveMode.PeekLock).Result;
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.MessageId == id);
+            client.Complete(rcvMsg);
         }
 
         /// <summary>
@@ -382,7 +381,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingHttp_MessageId()
         {
-            client = getQueueClient("iotqueue", "http");
+            client = getQueueClient(Settings.Queue12, "http");
             string key = "test";
             int value = 12345;
 
@@ -408,7 +407,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingHttp_ReadBody()
         {
-            client = getQueueClient("iotqueue", "http");
+            client = getQueueClient(Settings.Queue13, "http");
             string key = "test";
             int value = 12345;
             string body = "Sample Message";
@@ -426,7 +425,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             string rcvdBody = rcvMsg.GetBody<string>();
             Assert.True(rcvdBody == body);
             //Known Issue - Http returns every property value as string but it passed
-            Assert.True(Int32.Parse((String)rcvMsg.Properties[key]) == value);
+            Assert.True(int.Parse((String)rcvMsg.Properties[key]) == value);
         }
 
         /// <summary>
@@ -436,7 +435,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingAmqp_ReadBody()
         {
-            client = getQueueClient("iotqueue", "amqp");
+            client = getQueueClient(Settings.Queue14, "amqp");
             string key = "test";
             int value = 12345;
             string body = "Sample Message";
@@ -464,7 +463,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingHttp_ReadCustomBody()
         {
-            client = getQueueClient("iotqueue", "http");
+            client = getQueueClient(Settings.Queue15, "http");
             string key = "test";
             int value = 12345;
             TestClass tClass = new TestClass();
@@ -483,7 +482,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             TestClass rcvdClass = rcvMsg.GetBody<TestClass>();
             Assert.True(rcvdClass == tClass);
             //Known Issue - Http returns every property value as string 
-            Assert.True(Int32.Parse((String)rcvMsg.Properties[key]) == value);
+            Assert.True(int.Parse((String)rcvMsg.Properties[key]) == value);
         }
 
         /// <summary>
@@ -494,7 +493,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingAmqp_ReadCustomBody()
         {
-            client = getQueueClient("iotqueue", "amqp");
+            client = getQueueClient(Settings.Queue16, "amqp");
             string key = "test";
             int value = 12345;
             TestClass tClass = new TestClass();

@@ -8,17 +8,25 @@
 // LICENSE IS DISTRIBUTED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 // KIND, EITHER EXPRESS OR IMPLIED. SEE THE LICENSE FOR THE SPECIFIC LANGUAGE GOVERNING
 // PERMISSIONS AND LIMITATIONS UNDER THE LICENSE.
-//=======================================================================================
+//=======================================================================================using Microsoft.ServiceBus;
+using System;
 
-using System.Runtime.Serialization;
-
-namespace ServiceBus.OpenSdk.UnitTestsCore
+namespace ServiceBus.OpenSdk.EnvironmentSetup
 {
-   
-    public class TestClass
+    public class QueueSetup
     {
-        public TestClass()
+        public static void CreateQueue(int numberOfQueue, string connectionString)
         {
+            var nsMgr = NamespaceManager.CreateFromConnectionString(connectionString);
+            for (int i = 0; i < numberOfQueue; i++)
+            {
+                string qName = "iotqueue" + i.ToString();
+                if (nsMgr.QueueExists(qName))
+                    nsMgr.DeleteQueue(qName);
+                nsMgr.CreateQueue(qName);
+
+            }
+            Console.WriteLine("Queue has been created !!");
         }
     }
 }
