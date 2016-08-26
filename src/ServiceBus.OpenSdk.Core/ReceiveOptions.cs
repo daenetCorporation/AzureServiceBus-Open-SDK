@@ -8,7 +8,8 @@
 // LICENSE IS DISTRIBUTED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 // KIND, EITHER EXPRESS OR IMPLIED. SEE THE LICENSE FOR THE SPECIFIC LANGUAGE GOVERNING
 // PERMISSIONS AND LIMITATIONS UNDER THE LICENSE.
-//=======================================================================================using System;
+//=======================================================================================
+using System;
 
 namespace ServiceBus.OpenSdk
 {

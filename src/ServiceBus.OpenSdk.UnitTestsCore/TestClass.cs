@@ -14,11 +14,17 @@ using System.Runtime.Serialization;
 
 namespace ServiceBus.OpenSdk.UnitTestsCore
 {
-   
+   [DataContract(Name ="TestClass", Namespace ="ServiceBus.OpenSdk")]
     public class TestClass
     {
-        public TestClass()
+        [DataMember]
+        public string PropertyOne { get; set; }
+        [DataMember]
+        public int PropertyTwo { get; set; }
+        public TestClass(string propertyOne, int propertyTwo)
         {
+            this.PropertyOne = propertyOne;
+            this.PropertyTwo = propertyTwo;
         }
     }
 }

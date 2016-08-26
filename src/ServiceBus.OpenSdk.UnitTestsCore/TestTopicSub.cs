@@ -10,6 +10,7 @@
 // PERMISSIONS AND LIMITATIONS UNDER THE LICENSE.
 //=======================================================================================
 using System;
+using System.Runtime.Serialization;
 using Xunit;
 
 namespace ServiceBus.OpenSdk.UnitTestsCore
@@ -21,15 +22,11 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         private SubscriptionClient subscriptionClient1;
         private SubscriptionClient subscriptionClient2;
         Settings settings;
+        private DataContractSerializer m_dataConSer;
+
         public TestTopicSub()
         {
-        //    SubscriptionClient client = getSubscriptionClient("iottopic", "iotsubscription", "http");
-        //    while (true)
-        //    {
-        //        var rcvMessage = client.Receive(ReceiveMode.ReceiveAndDelete).Result;
-        //        if (rcvMessage == null)
-        //            break;
-        //    }
+        
         }
         /// <summary>
         /// Returns the topic client for service bus
@@ -54,8 +51,8 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToTopicUsingHttp_Int32()
         {
-            topicClient = getTopicClient("iottopic", "http");
-            subscriptionClient = getSubscriptionClient("iottopic", "iotsubscription", "http");
+            topicClient = getTopicClient(Settings.Topic0, "http");
+            subscriptionClient = getSubscriptionClient(Settings.Topic0, "iotsubscription", "http");
             string key = "test";
             int value = 12345;
             Message msg = new Message("Sample message")
@@ -78,11 +75,11 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToTopicUsingHttp_Int64()
         {
-            topicClient = getTopicClient("iottopic", "http");
-            subscriptionClient = getSubscriptionClient("iottopic", "iotsubscription", "http");
+            topicClient = getTopicClient(Settings.Topic1, "http");
+            subscriptionClient = getSubscriptionClient(Settings.Topic1, "iotsubscription", "http");
             string key = "test";
-            //Int64 value = 12345;
-            long value = 1111133111111112345L;
+            Int64 value = 12345L;
+            //long value = 1111133111111112345L;
             Message msg = new Message("Sample message")
             {
                 Properties = { { key, value } }
@@ -95,7 +92,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             Assert.True(rcvMsg.Properties != null);
             Assert.True(rcvMsg.Properties.ContainsKey(key));
 
-            Assert.True(long.Parse((String)rcvMsg.Properties[key]) == value);
+            Assert.True(Int64.Parse((String)rcvMsg.Properties[key]) == value);
         }
         /// <summary>
         /// Send message to Topic via http protocol
@@ -105,8 +102,8 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToTopicUsingHttp_Double()
         {
-            topicClient = getTopicClient("iottopic", "http");
-            subscriptionClient = getSubscriptionClient("iottopic", "iotsubscription", "http");
+            topicClient = getTopicClient(Settings.Topic2, "http");
+            subscriptionClient = getSubscriptionClient(Settings.Topic2, "iotsubscription", "http");
             string key = "test";
             double value = 12345.0;
             Message msg = new Message("Sample message")
@@ -133,8 +130,8 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToTopicUsingHttp_Float()
         {
-            topicClient = getTopicClient("iottopic", "http");
-            subscriptionClient = getSubscriptionClient("iottopic", "iotsubscription", "http");
+            topicClient = getTopicClient(Settings.Topic3, "http");
+            subscriptionClient = getSubscriptionClient(Settings.Topic3, "iotsubscription", "http");
             string key = "test";
             float value = 12345f;
             Message msg = new Message("Sample message")
@@ -158,8 +155,8 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToTopicUsingAmqp_Int32()
         {
-            topicClient = getTopicClient("iottopic", "amqp");
-            subscriptionClient = getSubscriptionClient("iottopic", "iotsubscription", "amqp");
+            topicClient = getTopicClient(Settings.Topic4, "amqp");
+            subscriptionClient = getSubscriptionClient(Settings.Topic4, "iotsubscription", "amqp");
             string key = "test";
             int value = 12345;
             Message msg = new Message("Sample message")
@@ -175,6 +172,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             Assert.True(rcvMsg.Properties.ContainsKey(key));
             Assert.True(rcvMsg.Properties[key].GetType().Name == "Int32");
             Assert.True((Int32)rcvMsg.Properties[key] == value);
+            subscriptionClient.Complete(rcvMsg);
         }
 
         /// <summary>
@@ -184,11 +182,11 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToTopicUsingAmqp_Int64()
         {
-            topicClient = getTopicClient("iottopic", "amqp");
-            subscriptionClient = getSubscriptionClient("iottopic", "iotsubscription", "amqp");
+            topicClient = getTopicClient(Settings.Topic5, "amqp");
+            subscriptionClient = getSubscriptionClient(Settings.Topic5, "iotsubscription", "amqp");
             string key = "test";
-            //Int64 value = 12345;
-            long value = 1111133111111112345L;
+            Int64 value = 12345L;
+            //long value = 1111133111111112345L;
             Message msg = new Message("Sample message")
             {
                 Properties = { { key, value } }
@@ -211,8 +209,8 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToTopicUsingAmqp_Double()
         {
-            topicClient = getTopicClient("iottopic", "amqp");
-            subscriptionClient = getSubscriptionClient("iottopic", "iotsubscription", "amqp");
+            topicClient = getTopicClient(Settings.Topic6, "amqp");
+            subscriptionClient = getSubscriptionClient(Settings.Topic6, "iotsubscription", "amqp");
             string key = "test";
             double value = 12345.0;
             Message msg = new Message("Sample message")
@@ -237,8 +235,8 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToTopicUsingAmqp_Float()
         {
-            topicClient = getTopicClient("iottopic", "amqp");
-            subscriptionClient = getSubscriptionClient("iottopic", "iotsubscription", "amqp");
+            topicClient = getTopicClient(Settings.Topic7, "amqp");
+            subscriptionClient = getSubscriptionClient(Settings.Topic7, "iotsubscription", "amqp");
             string key = "test";
             float value = 12345.89f;
             Message msg = new Message("Sample message")
@@ -264,12 +262,11 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToTopicUsingAmqp_ClsObj()
         {
-            topicClient = getTopicClient("iottopic", "amqp");
-            subscriptionClient = getSubscriptionClient("iottopic", "iotsubscription", "amqp");
+            topicClient = getTopicClient(Settings.Topic8, "amqp");
+            subscriptionClient = getSubscriptionClient(Settings.Topic8, "iotsubscription", "amqp");
             string key = "test";
-            //Int64 value = 12345;
-            long value = 1111133111111112345L;
-            TestClass cls = new TestClass();
+            Int64 value = 12345L;
+            TestClass cls = new TestClass("",3);
             Message msg = new Message(cls)
             {
                 Properties = { { key, value } }
@@ -291,23 +288,23 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToTopicUsingHttp_ClsObj()
         {
-            topicClient = getTopicClient("iottopic", "http");
-            subscriptionClient = getSubscriptionClient("iottopic", "iotsubscription", "http");
+            topicClient = getTopicClient(Settings.Topic9, "http");
+            m_dataConSer = new DataContractSerializer(typeof(TestClass));
+            subscriptionClient = getSubscriptionClient(Settings.Topic9, "iotsubscription", "http");
             string key = "test";
-            // Int64 value = 12345;
-            long value = 1111133111111112345L;
-            TestClass cls = new TestClass();
-            Message msg = new Message(cls)
+            Int64 value = 12345L;
+            TestClass tClass = new TestClass("ServiceBussSdk", 123456);
+            Message msg = new Message(tClass, m_dataConSer)
             {
-                Properties = { { key, value } }
+                Properties = { { key, value } },
+                MessageId = "12345"
             };
             topicClient.Send(msg).Wait();
             var rcvMsg = subscriptionClient.Receive(ReceiveMode.ReceiveAndDelete).Result;
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.Properties != null);
             Assert.True(rcvMsg.Properties.ContainsKey(key));
-
-            Assert.True((long)rcvMsg.Properties[key] == value);
+           Assert.True(Int64.Parse(rcvMsg.Properties[key].ToString()) == value);
             Assert.True(rcvMsg.GetBody<TestClass>() != null);
         }
 
@@ -320,8 +317,8 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void RcvAbandonFromSubscriptionUsingAmqp()
         {
-            topicClient = getTopicClient("iottopic", "amqp");
-            subscriptionClient = getSubscriptionClient("iottopic", "iotsubscription", "amqp");
+            topicClient = getTopicClient(Settings.Topic10, "amqp");
+            subscriptionClient = getSubscriptionClient(Settings.Topic10, "iotsubscription", "amqp");
             String key = "test";
             int value = 12345;
             String id = "myId";
@@ -354,20 +351,15 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         public void RcvCompleteFromSubscriptionUsingAmqp()
         {
 
-            topicClient = getTopicClient("iottopic", "amqp");
-            subscriptionClient = getSubscriptionClient("iottopic", "iotsubscription", "amqp");
+            topicClient = getTopicClient(Settings.Topic11, "amqp");
+            subscriptionClient = getSubscriptionClient(Settings.Topic11, "iotsubscription", "amqp");
             int value = 12345;
             String key = "test";
             Message msg = new Message("Sample Message")
             {
                 Properties = { { key, value } }
             };
-            //while (true)
-            //{
-            //    var rcvMessage = subscriptionClient.Receive(ReceiveMode.ReceiveAndDelete).Result;
-            //    if (rcvMessage == null)
-            //        break;
-            //}
+            
             topicClient.Send(msg).Wait();
 
             var rcvMsg = subscriptionClient.Receive(ReceiveMode.PeekLock).Result;
@@ -387,8 +379,8 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void RcvAbandonFromSubscriptionUsingHttp()
         {
-            topicClient = getTopicClient("iottopic", "http");
-            subscriptionClient = getSubscriptionClient("iottopic", "iotsubscription", "http");
+            topicClient = getTopicClient(Settings.Topic12, "http");
+            subscriptionClient = getSubscriptionClient(Settings.Topic12, "iotsubscription", "http");
             String key = "test";
             int value = 12345;
             String id = "myId";
@@ -408,6 +400,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             rcvMsg = subscriptionClient.Receive(ReceiveMode.PeekLock).Result;
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.MessageId == id);
+            subscriptionClient.Complete(rcvMsg);
         }
 
         /// <summary>
@@ -420,10 +413,10 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         public void RcvCompleteFromSubscriptionUsingHttp()
         {
 
-            topicClient = getTopicClient("iottopic", "http");
-            subscriptionClient = getSubscriptionClient("iottopic", "iotsubscription", "http");
-            //Int64 value = 12345;
-            long value = 1111133111111112345L;
+            topicClient = getTopicClient(Settings.Topic13, "http");
+            subscriptionClient = getSubscriptionClient(Settings.Topic13, "iotsubscription", "http");
+            Int64 value = 12345L;
+            //long value = 1111133111111112345L;
             String key = "test";
             Message msg = new Message("Sample Message")
             {

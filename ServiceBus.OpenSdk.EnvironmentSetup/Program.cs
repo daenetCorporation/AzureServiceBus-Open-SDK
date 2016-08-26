@@ -17,6 +17,7 @@ namespace ServiceBus.OpenSdk.EnvironmentSetup
         static void Main(string[] args)
         {
             QueueSetup.CreateQueue(17, ConnectionString);
+            TopicSetup.CreateTopic(15, ConnectionString);
 
         }
     }

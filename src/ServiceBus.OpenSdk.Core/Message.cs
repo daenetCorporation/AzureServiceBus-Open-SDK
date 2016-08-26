@@ -70,8 +70,8 @@ namespace ServiceBus.OpenSdk
         {
             initializeMessage();
             this.BodyStream = BodyStream;
-            if (this.Body == null)
-                this.Body = this.GetBody<String>(null);
+            //if (this.Body == null)
+            //    this.Body = this.GetBody<String>(null);
         }
 
         private void initializeMessage()

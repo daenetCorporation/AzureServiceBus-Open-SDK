@@ -11,23 +11,25 @@
 //=======================================================================================
 using Microsoft.ServiceBus;
 using System;
-
 namespace ServiceBus.OpenSdk.EnvironmentSetup
 {
-    public class QueueSetup
+    public class TopicSetup
     {
-        public static void CreateQueue(int numberOfQueue, string connectionString)
+        public static void CreateTopic(int numberOfTopic, string connectionString)
         {
-            var nsMgr = NamespaceManager.CreateFromConnectionString(connectionString);
-            for (int i = 0; i < numberOfQueue; i++)
+            NamespaceManager nsMgr = NamespaceManager.CreateFromConnectionString(connectionString);
+            for (int i = 0; i < numberOfTopic; i++)
             {
-                string qName = "iotqueue" + i.ToString();
-                if (nsMgr.QueueExists(qName))
-                    nsMgr.DeleteQueue(qName);
-                nsMgr.CreateQueue(qName);
+                if (nsMgr.TopicExists("iottopic" + i.ToString()))
+                    nsMgr.DeleteTopic("iottopic" + i.ToString());
 
+                var qDesc = nsMgr.CreateTopic("iottopic" + i.ToString());
+
+                if (nsMgr.SubscriptionExists("iottopic" + i.ToString(), "iotsubscription"))
+                    nsMgr.DeleteSubscription("iottopic" + i.ToString(), "iotsubscription");
+                nsMgr.CreateSubscription("iottopic" + i.ToString(), "iotsubscription");
             }
-            Console.WriteLine("Queue has been created !!");
-        }
+            Console.WriteLine("Topic hsa been created !!"); 
+        } 
     }
 }

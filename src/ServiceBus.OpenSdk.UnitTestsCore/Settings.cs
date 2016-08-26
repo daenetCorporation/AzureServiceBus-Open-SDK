@@ -18,23 +18,38 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
     public class Settings
     {
         public static string EndPoint { get; set; }
-        public static string Queue0;
-        public static string Queue1;
-        public static string Queue2;
-        public static string Queue3;
-        public static string Queue4;
-        public static string Queue5;
-        public static string Queue6;
-        public static string Queue7;
-        public static string Queue8;
-        public static string Queue9;
-        public static string Queue10;
-        public static string Queue11;
-        public static string Queue12;
-        public static string Queue13;
-        public static string Queue14;
-        public static string Queue15;
-        public static string Queue16;
+        public static string Queue0 { get; set; }
+        public static string Queue1 { get; set; }
+        public static string Queue2 { get; set; }
+        public static string Queue3 { get; set; }
+        public static string Queue4 { get; set; }
+        public static string Queue5 { get; set; }
+        public static string Queue6 { get; set; }
+        public static string Queue7 { get; set; }
+        public static string Queue8 { get; set; }
+        public static string Queue9 { get; set; }
+        public static string Queue10 { get; set; }
+        public static string Queue11 { get; set; }
+        public static string Queue12 { get; set; }
+        public static string Queue13 { get; set; }
+        public static string Queue14 { get; set; }
+        public static string Queue15 { get; set; }
+        public static string Queue16 { get; set; }
+        public static string Topic0 { get; set; }
+        public static string Topic1 { get; set; }
+        public static string Topic2 { get; set; }
+        public static string Topic3 { get; set; }
+        public static string Topic4 { get; set; }
+        public static string Topic5 { get; set; }
+        public static string Topic6 { get; set; }
+        public static string Topic7 { get; set; }
+        public static string Topic8 { get; set; }
+        public static string Topic9 { get; set; }
+        public static string Topic10 { get; set; }
+        public static string Topic11 { get; set; }
+        public static string Topic12 { get; set; }
+        public static string Topic13 { get; set; }
+        public static string Topic14 { get; set; }
 
         static Settings()
         {
@@ -66,7 +81,24 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Queue13 = entities["QueueName13"];
                 Queue14 = entities["QueueName14"];
                 Queue15 = entities["QueueName15"];
-                Queue16 = entities["QueueName16"]; 
+                Queue16 = entities["QueueName16"];
+                Topic0 = entities["TopicName0"];
+                Topic1 = entities["TopicName1"];
+                Topic2 = entities["TopicName2"];
+                Topic3 = entities["TopicName3"];
+                Topic4 = entities["TopicName4"];
+                Topic5 = entities["TopicName5"];
+                Topic6 = entities["TopicName6"];
+                Topic7 = entities["TopicName7"];
+                Topic8 = entities["TopicName8"];
+                Topic9 = entities["TopicName9"];
+                Topic10 = entities["TopicName10"];
+                Topic11 = entities["TopicName11"];
+                Topic12 = entities["TopicName12"];
+                Topic13 = entities["TopicName13"];
+                Topic14 = entities["TopicName14"];
+
+
 
 
             }
