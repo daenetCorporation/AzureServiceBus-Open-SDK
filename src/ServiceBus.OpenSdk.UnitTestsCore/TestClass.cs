@@ -20,7 +20,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [DataMember]
         public string PropertyOne { get; set; }
         [DataMember]
-        public int PropertyTwo { get; set; }
+        public int PropertyTwo { get; set; }    
         public TestClass(string propertyOne, int propertyTwo)
         {
             this.PropertyOne = propertyOne;

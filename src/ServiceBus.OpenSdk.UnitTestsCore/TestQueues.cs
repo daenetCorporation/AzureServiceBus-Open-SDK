@@ -14,19 +14,18 @@ using System;
 using System.IO;
 using System.Runtime.Serialization;
 using Xunit;
+using Newtonsoft.Json;
+using System.Xml.Serialization;
 
 namespace ServiceBus.OpenSdk.UnitTestsCore
 {
 
     public class TestQueues
-    {
-        private QueueClient m_client;
-        private Settings m_settings;
-        private DataContractSerializer m_dataConSer;
+    { 
 
         public TestQueues()
         {
-            
+
         }
 
         /// <summary>
@@ -48,23 +47,23 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingAmqp_Int32()
         {
-            m_client = getQueueClient(Settings.Queue0, "amqp");
+            var qclient = getQueueClient(Settings.Queue0, "amqp");
             string key = "test";
             int value = 12345;
             Message msg = new Message("Sample message")
             {
                 Properties = { { key, value } }
             };
-            m_client.Send(msg).Wait();
- 
-            var rcvMsg = m_client.Receive(ReceiveMode.ReceiveAndDelete).Result;
+            qclient.Send(msg).Wait();
+
+            var rcvMsg = qclient.Receive(ReceiveMode.ReceiveAndDelete).Result;
             Stream strm = rcvMsg.GetBodyStream();
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.Properties != null);
             Assert.True(rcvMsg.Properties.ContainsKey(key));
             Assert.True(rcvMsg.Properties[key].GetType().Name == "Int32");
             Assert.True((int)rcvMsg.Properties[key] == value);
-           
+
         }
 
         /// <summary>
@@ -74,7 +73,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingAmqp_Double()
         {
-            m_client = getQueueClient(Settings.Queue1, "amqp");
+             var qclient = getQueueClient(Settings.Queue1, "amqp");
             string key = "test";
             double value = 12345.0;
 
@@ -83,8 +82,8 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Properties = { { key, value }, { "blah", "12345" } },
                 MessageId = "8121345hk"
             };
-            m_client.Send(msg).Wait();
-            var rcvMsg = m_client.Receive(ReceiveMode.ReceiveAndDelete).Result;
+            qclient.Send(msg).Wait();
+            var rcvMsg = qclient.Receive(ReceiveMode.ReceiveAndDelete).Result;
 
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.Properties != null);
@@ -100,16 +99,16 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingAmqp_Float()
         {
-            m_client = getQueueClient(Settings.Queue2, "amqp");
+            var qclient = getQueueClient(Settings.Queue2, "amqp");
             string key = "test";
             float value = 12345.89f;
             Message msg = new Message("Sample message")
             {
                 Properties = { { key, value } }
             };
-            m_client.Send(msg).Wait();
+            qclient.Send(msg).Wait();
 
-            var rcvMsg = m_client.Receive(ReceiveMode.ReceiveAndDelete).Result;
+            var rcvMsg = qclient.Receive(ReceiveMode.ReceiveAndDelete).Result;
 
 
             Assert.True(rcvMsg != null);
@@ -127,7 +126,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingHttp_Int32()
         {
-            m_client = getQueueClient(Settings.Queue3, "http");
+            var qclient = getQueueClient(Settings.Queue3, "http");
             string key = "test";
             int value = 12345;
 
@@ -136,9 +135,9 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Properties = { { key, value } },
                 MessageId = "12345"
             };
-            m_client.Send(msg).Wait();
+            qclient.Send(msg).Wait();
 
-            var rcvMsg = m_client.Receive(ReceiveMode.ReceiveAndDelete).Result;
+            var rcvMsg = qclient.Receive(ReceiveMode.ReceiveAndDelete).Result;
             Stream strm = rcvMsg.GetBodyStream();
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.Properties != null);
@@ -154,17 +153,16 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingAmqp_Int64()
         {
-            m_client = getQueueClient(Settings.Queue4, "amqp");
-            string key = "test";
-            // Int64 value = 123456789;
+            var qclient = getQueueClient(Settings.Queue4, "amqp");
+            string key = "test";     
             long value = 4294967296L;
             Message msg = new Message("Sample message")
             {
                 Properties = { { key, value } }
             };
-            m_client.Send(msg).Wait();
+            qclient.Send(msg).Wait();
 
-            var rcvMsg = m_client.Receive(ReceiveMode.ReceiveAndDelete).Result;
+            var rcvMsg = qclient.Receive(ReceiveMode.ReceiveAndDelete).Result;
 
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.Properties != null);
@@ -181,16 +179,16 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingHttp_Int64()
         {
-            m_client = getQueueClient(Settings.Queue5, "http");
+            var qclient = getQueueClient(Settings.Queue5, "http");
             string key = "test";
             long value = 1111133111111112345L;
             Message msg = new Message("Sample message")
             {
                 Properties = { { key, value } }
             };
-            m_client.Send(msg).Wait();
+            qclient.Send(msg).Wait();
 
-            var rcvMsg = m_client.Receive(ReceiveMode.ReceiveAndDelete).Result;
+            var rcvMsg = qclient.Receive(ReceiveMode.ReceiveAndDelete).Result;
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.Properties != null);
             Assert.True(rcvMsg.Properties.ContainsKey(key));
@@ -207,28 +205,26 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingAmqp_ClsObj()
         {
-            m_client = getQueueClient(Settings.Queue6, "amqp");
+            var qclient = getQueueClient(Settings.Queue6, "amqp");
             string key = "test";
             Int64 value = 12345L;
-            TestClass cls = new TestClass("",2);
+            TestClass cls = new TestClass("", 2);
             Message msg = new Message("abc")
             {
                 Properties = { { key, value } }
             };
 
-            m_client.Send(msg).Wait();
+            qclient.Send(msg).Wait();
 
-            var rcvMsg = m_client.Receive(ReceiveMode.ReceiveAndDelete).Result;
+            var rcvMsg = qclient.Receive(ReceiveMode.ReceiveAndDelete).Result;
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.Properties != null);
-            Assert.True(rcvMsg.Properties.ContainsKey(key));
-
+            Assert.True(rcvMsg.Properties.ContainsKey(key));  
             // TODO:
             // AMQP lite cannot do such kind of serialization tight now.
             // We will provide in the future a solution for this issue.
             // This is why we here ignore these two exceptions. See http?git..
             var ex = Assert.Throws<InvalidCastException>(() => Int64.Parse((String)rcvMsg.Properties[key]) == value);
-
             ex = Assert.Throws<InvalidCastException>(() => rcvMsg.GetBody<TestClass>());
         }
 
@@ -241,19 +237,18 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingHttp_ClsObj()
         {
-            m_client = getQueueClient(Settings.Queue7, "http");
+            var qclient = getQueueClient(Settings.Queue7, "http");
             String key = "test";
             Int64 value = 12345L;
-            Message msg = new Message(new TestClass("",6))
+            Message msg = new Message(new TestClass("", 6))
             {
                 Properties = { { key, value } }
             };
-            m_client.Send(msg).Wait();
-            var rcvMsg = m_client.Receive(ReceiveMode.ReceiveAndDelete).Result;
+            qclient.Send(msg).Wait();
+            var rcvMsg = qclient.Receive(ReceiveMode.ReceiveAndDelete).Result;
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.Properties != null);
-            Assert.True(rcvMsg.Properties.ContainsKey(key));
-
+            Assert.True(rcvMsg.Properties.ContainsKey(key)); 
             Assert.True(Int64.Parse((String)rcvMsg.Properties[key]) == value);
             Assert.True(rcvMsg.GetBody<TestClass>() != null);
         }
@@ -267,21 +262,19 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void RcvCompleteFromQueueUsingAmqp()
         {
-            m_client = getQueueClient(Settings.Queue8, "amqp");
+            var qclient = getQueueClient(Settings.Queue8, "amqp");
             Int64 value = 12345L;
             String key = "test";
             Message msg = new Message("Sample Message")
             {
                 Properties = { { key, value } }
             };
-            
-            m_client.Send(msg).Wait();
 
-            var rcvMsg = m_client.Receive(ReceiveMode.PeekLock).Result;
-            Assert.True(rcvMsg != null);
-
-            m_client.Complete(rcvMsg);
-            rcvMsg = m_client.Receive(ReceiveMode.PeekLock).Result;
+            qclient.Send(msg).Wait(); 
+            var rcvMsg = qclient.Receive(ReceiveMode.PeekLock).Result;
+            Assert.True(rcvMsg != null); 
+            qclient.Complete(rcvMsg);
+            rcvMsg = qclient.Receive(ReceiveMode.PeekLock).Result;
             Assert.True(rcvMsg == null);
         }
 
@@ -294,7 +287,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void RcvAbandonFromQueueUsingAmqp()
         {
-            m_client = getQueueClient(Settings.Queue9, "amqp");
+            var qclient = getQueueClient(Settings.Queue9, "amqp");
             String key = "test";
             Int64 value = 12345L;
             String id = "myId";
@@ -304,18 +297,17 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 MessageId = id
 
             };
-            m_client.Send(msg).Wait();
+            qclient.Send(msg).Wait();
 
-            var rcvMsg = m_client.Receive(ReceiveMode.PeekLock).Result;
+            var rcvMsg = qclient.Receive(ReceiveMode.PeekLock).Result;
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.MessageId == id);
-
-            m_client.Abandon(rcvMsg);
-            rcvMsg = m_client.Receive(ReceiveMode.PeekLock).Result;
+            qclient.Abandon(rcvMsg);
+            rcvMsg = qclient.Receive(ReceiveMode.PeekLock).Result;
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.MessageId == id);
-            m_client.Complete(rcvMsg);
-            
+            qclient.Complete(rcvMsg);
+
         }
 
         /// <summary>
@@ -327,20 +319,20 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void RcvCompleteFromQueueUsingHttp()
         {
-            m_client = getQueueClient(Settings.Queue10.ToString(), "http");
+            var qclient = getQueueClient(Settings.Queue10.ToString(), "http");
             String key = "test";
             Int64 value = 12345L;
             Message msg = new Message("Sample Message")
             {
                 Properties = { { key, value } }
             };
-            m_client.Send(msg).Wait();
+            qclient.Send(msg).Wait();
 
-            var rcvMsg = m_client.Receive(ReceiveMode.PeekLock).Result;
+            var rcvMsg = qclient.Receive(ReceiveMode.PeekLock).Result;
             Assert.True(rcvMsg != null);
 
-            m_client.Complete(rcvMsg);
-            rcvMsg = m_client.Receive(ReceiveMode.PeekLock).Result;
+            qclient.Complete(rcvMsg);
+            rcvMsg = qclient.Receive(ReceiveMode.PeekLock).Result;
             Assert.True(rcvMsg == null);
         }
 
@@ -353,7 +345,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void RcvAbandonFromQueueUsingHttp()
         {
-            m_client = getQueueClient(Settings.Queue11, "http");
+            var qclient = getQueueClient(Settings.Queue11, "http");
             Int64 value = 12345L;
             String key = "value";
             string id = "myId";
@@ -362,17 +354,17 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Properties = { { key, value } },
                 MessageId = id
             };
-            m_client.Send(msg).Wait();
+            qclient.Send(msg).Wait();
 
-            var rcvMsg = m_client.Receive(ReceiveMode.PeekLock).Result;
+            var rcvMsg = qclient.Receive(ReceiveMode.PeekLock).Result;
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.MessageId == id);
 
-            m_client.Abandon(rcvMsg);
-            rcvMsg = m_client.Receive(ReceiveMode.PeekLock).Result;
+            qclient.Abandon(rcvMsg);
+            rcvMsg = qclient.Receive(ReceiveMode.PeekLock).Result;
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.MessageId == id);
-            m_client.Complete(rcvMsg);
+            qclient.Complete(rcvMsg);
         }
 
         /// <summary>
@@ -383,7 +375,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingHttp_MessageId()
         {
-            m_client = getQueueClient(Settings.Queue12, "http");
+            var qclient = getQueueClient(Settings.Queue12, "http");
             string key = "test";
             int value = 12345;
 
@@ -392,9 +384,9 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Properties = { { key, value } },
                 MessageId = "8121345testing"
             };
-            m_client.Send(msg).Wait();
+            qclient.Send(msg).Wait();
 
-            var message = m_client.Receive(ReceiveMode.ReceiveAndDelete).Result;
+            var message = qclient.Receive(ReceiveMode.ReceiveAndDelete).Result;
 
             Assert.True(message != null);
             Assert.True(message.Properties != null);
@@ -409,7 +401,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingHttp_ReadBody()
         {
-            m_client = getQueueClient(Settings.Queue13, "http");
+            var qclient = getQueueClient(Settings.Queue13, "http");
             string key = "test";
             int value = 12345;
             string body = "Sample Message";
@@ -418,9 +410,9 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Properties = { { key, value } },
                 MessageId = "12345"
             };
-            m_client.Send(msg).Wait();                                                
+            qclient.Send(msg).Wait();
 
-            var rcvMsg = m_client.Receive(ReceiveMode.ReceiveAndDelete).Result;
+            var rcvMsg = qclient.Receive(ReceiveMode.ReceiveAndDelete).Result;
             Assert.True(rcvMsg != null);
             Stream strm = rcvMsg.GetBodyStream();
             Assert.True(strm != null);
@@ -437,7 +429,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingAmqp_ReadBody()
         {
-            m_client = getQueueClient(Settings.Queue14, "amqp");
+            var qclient = getQueueClient(Settings.Queue14, "amqp");
             string key = "test";
             int value = 12345;
             string body = "Sample Message";
@@ -446,9 +438,9 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Properties = { { key, value } },
                 MessageId = "12345"
             };
-            m_client.Send(msg).Wait();
+            qclient.Send(msg).Wait();
 
-            var rcvMsg = m_client.Receive(ReceiveMode.ReceiveAndDelete).Result;
+            var rcvMsg = qclient.Receive(ReceiveMode.ReceiveAndDelete).Result;
             Assert.True(rcvMsg != null);
             Stream strm = rcvMsg.GetBodyStream();
             Assert.True(strm != null);
@@ -464,19 +456,18 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         /// </summary
         [Fact]
         public void SendToQueueUsingHttp_ReadCustomBody()
-        {     
-            m_client = getQueueClient(Settings.Queue15, "http");
-            m_dataConSer = new DataContractSerializer(typeof(TestClass));
+        {
+            var qclient = getQueueClient(Settings.Queue15, "http"); 
             string key = "test";
             int value = 12345;
-            TestClass tClass = new TestClass("ServiceBussSdk",123456);
-            Message msg = new Message(tClass, m_dataConSer)
+            TestClass tClass = new TestClass("ServiceBussSdk", 123456);
+            Message msg = new Message(tClass)
             {
                 Properties = { { key, value } },
                 MessageId = "12345"
             };
-            m_client.Send(msg).Wait(); 
-            var rcvMsg = m_client.Receive(ReceiveMode.ReceiveAndDelete).Result; 
+            qclient.Send(msg).Wait();
+            var rcvMsg = qclient.Receive(ReceiveMode.ReceiveAndDelete).Result;
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.Properties != null);
             Assert.True(rcvMsg.Properties.ContainsKey(key));
@@ -492,27 +483,101 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToQueueUsingAmqp_ReadCustomBody()
         {
-            m_client = getQueueClient(Settings.Queue16, "amqp");
-            m_dataConSer = new DataContractSerializer(typeof(TestClass));
+            var qclient = getQueueClient(Settings.Queue16, "amqp");
+            var dataConSer = new DataContractSerializer(typeof(TestClass));
+
             string key = "test";
             int value = 12345;
             TestClass tClass = new TestClass("ServiceBussSdk", 123456);
-            Message msg = new Message(tClass,m_dataConSer)
+
+            using (MemoryStream stream = new MemoryStream())
+            {
+                dataConSer.WriteObject(stream, tClass);
+                stream.Position = 0;
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    string strMsg = reader.ReadToEnd();
+                    Message msg = new Message(strMsg)
+                    {
+                        Properties = { { key, value } },
+                        MessageId = "12345"
+                    };
+
+                    qclient.Send(msg).Wait();
+
+                    var rcvStrMsg = qclient.Receive(ReceiveMode.ReceiveAndDelete).Result;
+
+                    Assert.True(rcvStrMsg != null);
+
+                    var msgStream = rcvStrMsg.GetBodyStream();
+                    dataConSer = new DataContractSerializer(typeof(string));
+                    string msgAsString = dataConSer.ReadObject(msgStream) as string;
+                    using (MemoryStream memStr = new MemoryStream())
+                    {
+                        using (StreamWriter sW = new StreamWriter(memStr))
+                        {
+                            sW.Write(msgAsString);
+
+                            sW.Flush();
+
+                            memStr.Position = 0;
+                            dataConSer = new DataContractSerializer(typeof(TestClass));
+
+                            TestClass rcvObj = dataConSer.ReadObject(memStr) as TestClass;
+                            Assert.True(rcvObj != null);
+                        }
+
+                    }  
+                }
+            }
+        }
+
+        [Fact]
+        public void SendToQueueUsingAmqp_CustomBodyjson()
+        {
+            var qclient = getQueueClient(Settings.Queue17, "amqp");
+            string key = "test";
+            int value = 12345;
+            TestClass1 tClass = new TestClass1("ServiceBussSdk", 123456);
+            var strMgs = JsonConvert.SerializeObject(tClass);
+            Message msg = new Message(strMgs)
             {
                 Properties = { { key, value } },
                 MessageId = "12345"
             };
-            m_client.Send(msg).Wait();
-
-            var rcvMsg = m_client.Receive(ReceiveMode.ReceiveAndDelete).Result;
+            qclient.Send(msg).Wait();
+            var rcvMsg = qclient.Receive(ReceiveMode.ReceiveAndDelete).Result.GetBody<string>();
             Assert.True(rcvMsg != null);
-            Stream strm = rcvMsg.GetBodyStream();
-            Assert.True(strm != null);
-
-            TestClass rcvdClass = rcvMsg.GetBody<TestClass>();
-            Assert.True(rcvdClass == tClass);
-
+            TestClass1 testClass = JsonConvert.DeserializeObject<TestClass1>(rcvMsg);
         }
+        [Fact]
+        public void SendToQueueUsingAmqp_CusBodyjson()
+        {
+            var qclient = getQueueClient(Settings.Queue17, "amqp");
+            string key = "test";
+            int value = 12345;
+            TestClass1 tClass = new TestClass1("ServicebussOpenSdk",522);
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(TestClass1));
+            using (StringWriter textWriter = new StringWriter())
+            {
+                xmlSerializer.Serialize(textWriter, tClass);
+                var txt =  textWriter.ToString();
+                Message msg = new Message(txt)
+                {
+                    Properties = { { key, value } },
+                    MessageId = "12345"
+                };
+                qclient.Send(msg).Wait();
+            }
+           
+            var rcvMsg = qclient.Receive(ReceiveMode.ReceiveAndDelete).Result.GetBody<string>();
+            Assert.True(rcvMsg != null);
+            using (StringReader textReader = new StringReader(rcvMsg))
+            {
+                var rcvObj = xmlSerializer.Deserialize(textReader) as TestClass1;
+            }  
+        }
+
     }
 
 }

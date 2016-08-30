@@ -15,7 +15,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
 {
     public class TestEventHub
     {
-        private EventHubClient eventHubClient;
+        private EventHubClient m_eventHubClient;
         Settings settings;
         public TestEventHub()
         {
@@ -40,7 +40,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToEventHubUsingHttp()
         {
-             eventHubClient = getEventHubClient("iotEventHub", "http");
+             m_eventHubClient = getEventHubClient("iotEventHub", "http");
             
             string key = "test";
             int value = 12345;
@@ -49,7 +49,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Properties = { { key, value } }
             };
 
-            eventHubClient.Send(msg).Wait();
+            m_eventHubClient.Send(msg).Wait();
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToEventHubUsingAmqp()
         {
-             eventHubClient = getEventHubClient("iotEventHub", "amqp");
+             m_eventHubClient = getEventHubClient("iotEventHub", "amqp");
            
             string key = "test";
             int value = 12345;
@@ -67,7 +67,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Properties = { { key, value } }
             };
 
-            eventHubClient.Send(msg).Wait();
+            m_eventHubClient.Send(msg).Wait();
         }
 
     }

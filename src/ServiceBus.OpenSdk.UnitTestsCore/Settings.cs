@@ -35,6 +35,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         public static string Queue14 { get; set; }
         public static string Queue15 { get; set; }
         public static string Queue16 { get; set; }
+        public static string Queue17 { get; set; }
         public static string Topic0 { get; set; }
         public static string Topic1 { get; set; }
         public static string Topic2 { get; set; }
@@ -82,6 +83,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Queue14 = entities["QueueName14"];
                 Queue15 = entities["QueueName15"];
                 Queue16 = entities["QueueName16"];
+                Queue17 = entities["QueueName17"];
                 Topic0 = entities["TopicName0"];
                 Topic1 = entities["TopicName1"];
                 Topic2 = entities["TopicName2"];

@@ -16,6 +16,7 @@
       "type": "platform",
       "version": "1.0.0"
     },
+    "Newtonsoft.Json": "9.0.1",
     "ServiceBus.OpenSdk.Amqp": "1.0.0-*",
     "ServiceBus.OpenSdk.Core": "1.0.0-*",
     "ServiceBus.OpenSdk.Http": "1.0.0-*",
