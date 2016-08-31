@@ -11,13 +11,17 @@
 //=======================================================================================
 namespace ServiceBus.OpenSdk.EnvironmentSetup
 {
+    using System;
     class Program
     {
         private static string ConnectionString = "Endpoint=sb://iotlabcore.servicebus.windows.net/;SharedAccessKeyName=iotLabCore;SharedAccessKey=QbH/yR4rUHa80Lmiz7oCVl0bBIEclfMBZ/luFkQv0sA=";
         static void Main(string[] args)
         {
-            QueueSetup.CreateQueue(17, ConnectionString);
+            QueueSetup.CreateQueue(18, ConnectionString);
             TopicSetup.CreateTopic(15, ConnectionString);
+
+            Console.WriteLine("Created successfuly!!\n Please Enter !!!");
+            Console.ReadLine();
 
         }
     }

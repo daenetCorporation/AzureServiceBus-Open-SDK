@@ -2,7 +2,7 @@
   "version": "1.0.0-*",
   "buildOptions": {
     "emitEntryPoint": true,
-    "copyToOutput": "cradentianFile.json"
+    "copyToOutput": "credentials.json"
   },
 
   "testRunner": "xunit",

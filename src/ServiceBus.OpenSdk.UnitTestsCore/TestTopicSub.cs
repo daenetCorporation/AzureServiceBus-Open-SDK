@@ -9,9 +9,11 @@
 // KIND, EITHER EXPRESS OR IMPLIED. SEE THE LICENSE FOR THE SPECIFIC LANGUAGE GOVERNING
 // PERMISSIONS AND LIMITATIONS UNDER THE LICENSE.
 //=======================================================================================
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using Xunit;
 
 namespace ServiceBus.OpenSdk.UnitTestsCore
@@ -178,7 +180,6 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             var subscriptionClient = getSubscriptionClient(Settings.Topic5, "iotsubscription", "amqp");
             string key = "test";
             Int64 value = 12345L;
-            //long value = 1111133111111112345L;
             Message msg = new Message("Sample message")
             {
                 Properties = { { key, value } }
@@ -252,7 +253,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         /// Send custom class and asserts if custom class type has same value as it has been sent
         /// </summary>
         [Fact]
-        public void SendToTopicUsingAmqp_ClsObj()
+        public void SendToTopicUsingAmqp_ClsObjDataContractSerializer()
         {
             var topicClient = getTopicClient(Settings.Topic8, "amqp");
             var subscriptionClient = getSubscriptionClient(Settings.Topic8, "iotsubscription", "amqp");
@@ -300,6 +301,70 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Assert.True((long)rcvMsg.Properties[key] == value);  
             }
         }
+
+        /// <summary>
+        ///  Send message to topic via amqp protocol   
+        /// Send custom class and asserts if custom class type has same value as it has been sent
+        /// </summary>
+        [Fact]
+        public void SendToTopicUsingAmqp_CustomBodyJsonConvert()
+        {
+
+            var topicClient = getTopicClient(Settings.Topic14, "amqp");
+            var subscriptionClient = getSubscriptionClient(Settings.Topic14, "iotsubscription", "amqp");
+            string key = "test";
+            int value = 12345;
+            TestClass tClass = new TestClass("ServiceBussSdk", 123456);
+            var strMgs = JsonConvert.SerializeObject(tClass);
+            Message msg = new Message(strMgs)
+            {
+                Properties = { { key, value } },
+                MessageId = "12345"
+            };
+            topicClient.Send(msg).Wait();
+            var rcvMsg = subscriptionClient.Receive(ReceiveMode.ReceiveAndDelete).Result;
+            Assert.True(rcvMsg != null);
+            var rcvTxt = rcvMsg.GetBody<string>();
+            TestClass rcvObj = JsonConvert.DeserializeObject<TestClass>(rcvTxt);
+            Assert.True(rcvObj.PropertyOne == tClass.PropertyOne);
+            Assert.True(rcvObj.PropertyTwo == tClass.PropertyTwo);
+        }
+        /// <summary>
+        ///  Send message to topic via amqp protocol 
+        /// Send custom class and asserts if custom class type has same value as it has been sent
+        /// </summary>
+        [Fact]
+        public void SendToTopicUsingAmqp_CustomBodyXmlSerializer()
+        {
+            var topicClient = getTopicClient(Settings.Topic15, "amqp");
+            var subscriptionClient = getSubscriptionClient(Settings.Topic15, "iotsubscription", "amqp");
+            string key = "test";
+            int value = 12345;
+            TestClass tClass = new TestClass("ServicebussOpenSdk", 522);
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(TestClass));
+            using (StringWriter textWriter = new StringWriter())
+            {
+                xmlSerializer.Serialize(textWriter, tClass);
+                var txt = textWriter.ToString();
+                Message msg = new Message(txt)
+                {
+                    Properties = { { key, value } },
+                    MessageId = "12345"
+                };
+                topicClient.Send(msg).Wait();
+            }
+
+            var rcvMsg = subscriptionClient.Receive(ReceiveMode.ReceiveAndDelete).Result.GetBody<string>();
+            Assert.True(rcvMsg != null);
+            using (StringReader textReader = new StringReader(rcvMsg))
+            {
+                var rcvObj = xmlSerializer.Deserialize(textReader) as TestClass;
+
+                Assert.True(rcvObj.PropertyOne == tClass.PropertyOne);
+                Assert.True(rcvObj.PropertyTwo == tClass.PropertyTwo);
+            }
+        }
+       
         /// <summary>
         ///  Send message to topic via http protocol
         /// It sends an integer64 property asserts whether the received value is integer64

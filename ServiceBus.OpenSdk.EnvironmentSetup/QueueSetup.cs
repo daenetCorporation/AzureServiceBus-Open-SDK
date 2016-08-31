@@ -19,7 +19,7 @@ namespace ServiceBus.OpenSdk.EnvironmentSetup
         public static void CreateQueue(int numberOfQueue, string connectionString)
         {
             var nsMgr = NamespaceManager.CreateFromConnectionString(connectionString);
-            for (int i = 0; i < numberOfQueue; i++)
+            for (int i = 0; i < numberOfQueue+1; i++)
             {
                 string qName = "iotqueue" + i.ToString();
                 if (nsMgr.QueueExists(qName))

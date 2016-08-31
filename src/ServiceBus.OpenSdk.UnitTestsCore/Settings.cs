@@ -36,6 +36,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         public static string Queue15 { get; set; }
         public static string Queue16 { get; set; }
         public static string Queue17 { get; set; }
+        public static string Queue18 { get; set; }
         public static string Topic0 { get; set; }
         public static string Topic1 { get; set; }
         public static string Topic2 { get; set; }
@@ -51,6 +52,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         public static string Topic12 { get; set; }
         public static string Topic13 { get; set; }
         public static string Topic14 { get; set; }
+        public static string Topic15 { get; set; }
 
         static Settings()
         {
@@ -84,6 +86,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Queue15 = entities["QueueName15"];
                 Queue16 = entities["QueueName16"];
                 Queue17 = entities["QueueName17"];
+                Queue18 = entities["QueueName18"];
                 Topic0 = entities["TopicName0"];
                 Topic1 = entities["TopicName1"];
                 Topic2 = entities["TopicName2"];
@@ -99,6 +102,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Topic12 = entities["TopicName12"];
                 Topic13 = entities["TopicName13"];
                 Topic14 = entities["TopicName14"];
+                Topic15 = entities["TopicName15"];
 
 
 

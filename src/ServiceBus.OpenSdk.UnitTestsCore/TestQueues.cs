@@ -58,6 +58,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
 
             var rcvMsg = qclient.Receive(ReceiveMode.ReceiveAndDelete).Result;
             Stream strm = rcvMsg.GetBodyStream();
+
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.Properties != null);
             Assert.True(rcvMsg.Properties.ContainsKey(key));
@@ -141,8 +142,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             Stream strm = rcvMsg.GetBodyStream();
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.Properties != null);
-            Assert.True(rcvMsg.Properties.ContainsKey(key));
-            //Known Issue - Http returns every property value as string 
+            Assert.True(rcvMsg.Properties.ContainsKey(key)); 
             Assert.True(int.Parse((String)rcvMsg.Properties[key]) == value);
         }
 
@@ -167,7 +167,6 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.Properties != null);
             Assert.True(rcvMsg.Properties.ContainsKey(key));
-
             Assert.True((long)rcvMsg.Properties[key] == value);
             Assert.True(rcvMsg.GetBody<string>() == "Sample message");
         }
@@ -208,24 +207,35 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             var qclient = getQueueClient(Settings.Queue6, "amqp");
             string key = "test";
             Int64 value = 12345L;
-            TestClass cls = new TestClass("", 2);
-            Message msg = new Message("abc")
+            TestClass cls = new TestClass("ServiceBus", 420);
+
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(TestClass));
+            using (StringWriter txtWriter = new StringWriter())
             {
-                Properties = { { key, value } }
-            };
-
-            qclient.Send(msg).Wait();
-
+                xmlSerializer.Serialize(txtWriter, cls);
+                var txtMgs = txtWriter.ToString();
+                Message msg = new Message(txtMgs)
+                {
+                    Properties = { { key, value } }
+                };
+                qclient.Send(msg).Wait();
+            }
+               
             var rcvMsg = qclient.Receive(ReceiveMode.ReceiveAndDelete).Result;
+
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.Properties != null);
-            Assert.True(rcvMsg.Properties.ContainsKey(key));  
-            // TODO:
-            // AMQP lite cannot do such kind of serialization tight now.
-            // We will provide in the future a solution for this issue.
-            // This is why we here ignore these two exceptions. See http?git..
-            var ex = Assert.Throws<InvalidCastException>(() => Int64.Parse((String)rcvMsg.Properties[key]) == value);
-            ex = Assert.Throws<InvalidCastException>(() => rcvMsg.GetBody<TestClass>());
+            Assert.True(rcvMsg.Properties.ContainsKey(key));
+
+            var rcvTxt = rcvMsg.GetBody<string>();
+            using(StringReader txtReader = new StringReader(rcvTxt))
+            {
+               var rcvObj =  xmlSerializer.Deserialize(txtReader) as TestClass;
+
+                Assert.True(rcvObj.PropertyOne == cls.PropertyOne);
+                Assert.True(rcvObj.PropertyTwo == cls.PropertyTwo);
+            }
+           
         }
 
         /// <summary>
@@ -240,7 +250,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             var qclient = getQueueClient(Settings.Queue7, "http");
             String key = "test";
             Int64 value = 12345L;
-            Message msg = new Message(new TestClass("", 6))
+            Message msg = new Message(new TestClass("ServiceBusSdk", 6))
             {
                 Properties = { { key, value } }
             };
@@ -418,7 +428,6 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             Assert.True(strm != null);
             string rcvdBody = rcvMsg.GetBody<string>();
             Assert.True(rcvdBody == body);
-            //Known Issue - Http returns every property value as string but it passed
             Assert.True(int.Parse((String)rcvMsg.Properties[key]) == value);
         }
 
@@ -478,10 +487,9 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         /// <summary>
         /// Send message to Queue via amqp protocol
         ///  It sends message custom body and asserts if the custom body has same type as it has been sent
-        ///  [Known Issue] - Cannot send custom body through AMQP - Status - FAIL
         /// </summary
         [Fact]
-        public void SendToQueueUsingAmqp_ReadCustomBody()
+        public void SendToQueueUsingAmqp_ReadCustomBodyDataContractSerializer()
         {
             var qclient = getQueueClient(Settings.Queue16, "amqp");
             var dataConSer = new DataContractSerializer(typeof(TestClass));
@@ -531,14 +539,17 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 }
             }
         }
-
+        /// <summary>
+        /// Send message to Queue via amqp protocol
+        ///  It sends message custom body and asserts if the custom body has same type as it has been sent
+        /// </summary
         [Fact]
-        public void SendToQueueUsingAmqp_CustomBodyjson()
+        public void SendToQueueUsingAmqp_CustomBodyJsonConvert()
         {
             var qclient = getQueueClient(Settings.Queue17, "amqp");
             string key = "test";
             int value = 12345;
-            TestClass1 tClass = new TestClass1("ServiceBussSdk", 123456);
+            TestClass tClass = new TestClass("ServiceBussSdk", 123456);
             var strMgs = JsonConvert.SerializeObject(tClass);
             Message msg = new Message(strMgs)
             {
@@ -548,16 +559,22 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             qclient.Send(msg).Wait();
             var rcvMsg = qclient.Receive(ReceiveMode.ReceiveAndDelete).Result.GetBody<string>();
             Assert.True(rcvMsg != null);
-            TestClass1 testClass = JsonConvert.DeserializeObject<TestClass1>(rcvMsg);
+            TestClass rcvObj = JsonConvert.DeserializeObject<TestClass>(rcvMsg);
+            Assert.True(rcvObj.PropertyOne == tClass.PropertyOne);
+            Assert.True(rcvObj.PropertyTwo == tClass.PropertyTwo);
         }
+        /// <summary>
+        /// Send message to Queue via amqp protocol
+        ///  It sends message custom body and asserts if the custom body has same type as it has been sent
+        /// </summary
         [Fact]
-        public void SendToQueueUsingAmqp_CusBodyjson()
+        public void SendToQueueUsingAmqp_CustomBodyXmlSerializer()
         {
-            var qclient = getQueueClient(Settings.Queue17, "amqp");
+            var qclient = getQueueClient(Settings.Queue18, "amqp");
             string key = "test";
             int value = 12345;
-            TestClass1 tClass = new TestClass1("ServicebussOpenSdk",522);
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(TestClass1));
+            TestClass tClass = new TestClass("ServicebussOpenSdk",522);
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(TestClass));
             using (StringWriter textWriter = new StringWriter())
             {
                 xmlSerializer.Serialize(textWriter, tClass);
@@ -574,7 +591,10 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             Assert.True(rcvMsg != null);
             using (StringReader textReader = new StringReader(rcvMsg))
             {
-                var rcvObj = xmlSerializer.Deserialize(textReader) as TestClass1;
+                var rcvObj = xmlSerializer.Deserialize(textReader) as TestClass;
+
+                Assert.True(rcvObj.PropertyOne == tClass.PropertyOne);
+                Assert.True(rcvObj.PropertyTwo == tClass.PropertyTwo);
             }  
         }
 

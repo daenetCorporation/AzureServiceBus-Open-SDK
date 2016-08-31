@@ -26,5 +26,6 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             this.PropertyOne = propertyOne;
             this.PropertyTwo = propertyTwo;
         }
+        public TestClass() { }
     }
 }
