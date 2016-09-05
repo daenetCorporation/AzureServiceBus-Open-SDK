@@ -18,7 +18,7 @@ namespace ServiceBus.OpenSdk.EnvironmentSetup
         public static void CreateTopic(int numberOfTopic, string connectionString)
         {
             NamespaceManager nsMgr = NamespaceManager.CreateFromConnectionString(connectionString);
-            for (int i = 0; i < numberOfTopic+1; i++)
+            for (int i = 0; i < numberOfTopic; i++)
             {
                 if (nsMgr.TopicExists("iottopic" + i.ToString()))
                     nsMgr.DeleteTopic("iottopic" + i.ToString());

@@ -87,8 +87,7 @@ namespace ServiceBus.OpenSdk
             ForcePersistence = false;
             IsBodyConsumed = false;
             Label = null;
-            LockedUntilUtc = DateTime.UtcNow.AddSeconds(120);
-            //LockToken = new Guid();
+            LockedUntilUtc = DateTime.UtcNow.AddSeconds(120);  
             MessageId = Guid.NewGuid().ToString();
             PartitionKey = null;
             Properties = new Dictionary<string, object>();

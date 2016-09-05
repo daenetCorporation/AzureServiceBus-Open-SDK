@@ -93,7 +93,6 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         /// <summary>
         /// Send message to Topic via http protocol
         /// It sends an double property asserts whether the received value is double
-        /// [Known Issue]HTTP protocol returns message property value in String regardless of original type of property value. Status - FAIL
         /// </summary>
         [Fact]
         public void SendToTopicUsingHttp_Double()
@@ -112,7 +111,6 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
             Assert.True(rcvMsg != null);
             Assert.True(rcvMsg.Properties != null);
             Assert.True(rcvMsg.Properties.ContainsKey(key));
-            //HTTP protocol returns message property value in String regardless of original type of property value
             Assert.True(rcvMsg.Properties[key].GetType().Name == "String");
             Assert.True(double.Parse(rcvMsg.Properties[key].ToString()) == value);
         }

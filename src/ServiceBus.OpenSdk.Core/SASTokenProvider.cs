@@ -32,7 +32,7 @@ namespace ServiceBus.OpenSdk
         protected override TokenAndExpiration GetTokenNoCache(string serviceNamespace, string acsHostName, string sbHostName, string path)
         {
             string uri = "http://" + serviceNamespace + "." + sbHostName + path;
-            var expiry = GetExpiry(this.tokenExpiryInSeconds); // Set token lifetime to 20 minutes. 
+            var expiry = GetExpiry(this.tokenExpiryInSeconds); 
             string stringToSign = HttpUtility.UrlEncode(uri) + "\n" + expiry;
 
             var hmac = SHA.computeHMAC_SHA256(Encoding.UTF8.GetBytes(this.keySecret), Encoding.UTF8.GetBytes(stringToSign));

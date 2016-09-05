@@ -10,16 +10,15 @@
 // PERMISSIONS AND LIMITATIONS UNDER THE LICENSE.
 //=======================================================================================
 namespace ServiceBus.OpenSdk
-{                                         
+{
     using System;
     using System.IO;
     using System.Net;
     using System.Net.Http;
-    using System.Threading.Tasks;   
+    using System.Threading.Tasks;
     using System.Collections.Generic;
-    using ServiceBus.OpenSdk;
     using System.Net.Http.Headers;
-    using System.Linq;           
+    using System.Linq;
     public class HttpTransport : IIotTransport
     {
                               
