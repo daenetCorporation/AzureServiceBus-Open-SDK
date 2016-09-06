@@ -16,6 +16,12 @@ namespace ServiceBus.OpenSdk.EnvironmentSetup
 {
     public class QueueSetup
     {
+        /// <summary>
+        /// It will create Queue using connection string
+        /// You have to give your connection string with manage rights
+        /// </summary>
+        /// <param name="numberOfQueue">Number of Queue</param>
+        /// <param name="connectionString">Connection String of service bus</param>
         public static void CreateQueue(int numberOfQueue, string connectionString)
         {
             var nsMgr = NamespaceManager.CreateFromConnectionString(connectionString);

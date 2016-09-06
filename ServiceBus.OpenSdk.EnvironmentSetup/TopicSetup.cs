@@ -14,7 +14,13 @@ using System;
 namespace ServiceBus.OpenSdk.EnvironmentSetup
 {
     public class TopicSetup
-    {
+    {     
+        /// <summary>
+        /// It will create Topic.
+        /// You have to give connecetion string with manage rights
+        /// </summary>
+        /// <param name="numberOfTopic"> Number of Topic</param>
+        /// <param name="connectionString">Connection string with manage rights</param>
         public static void CreateTopic(int numberOfTopic, string connectionString)
         {
             NamespaceManager nsMgr = NamespaceManager.CreateFromConnectionString(connectionString);
