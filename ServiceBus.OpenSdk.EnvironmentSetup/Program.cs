@@ -17,8 +17,8 @@ namespace ServiceBus.OpenSdk.EnvironmentSetup
         private static string ConnectionString = "Endpoint=sb:// ;SharedAccessKeyName= ;SharedAccessKey="; //Your Service Bus Connection String
         static void Main(string[] args)
         {
-            //QueueSetup.CreateQueue(18, ConnectionString);
-            //TopicSetup.CreateTopic(15, ConnectionString);
+            QueueSetup.CreateQueue(18, ConnectionString);
+            TopicSetup.CreateTopic(15, ConnectionString);
             EventHub.CreateEventHub(ConnectionString);
 
             Console.WriteLine("Created successfuly!!\n Please Enter !!!");
