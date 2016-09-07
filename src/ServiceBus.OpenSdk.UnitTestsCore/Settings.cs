@@ -53,6 +53,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         public static string Topic13 { get; set; }
         public static string Topic14 { get; set; }
         public static string Topic15 { get; set; }
+        public static string EventHub { get; set; }
 
         static Settings()
         {
@@ -103,6 +104,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
                 Topic13 = entities["TopicName13"];
                 Topic14 = entities["TopicName14"];
                 Topic15 = entities["TopicName15"];
+                EventHub = entities["EventHub"];
 
 
 

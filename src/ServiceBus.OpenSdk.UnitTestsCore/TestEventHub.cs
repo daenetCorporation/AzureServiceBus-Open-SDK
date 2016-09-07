@@ -15,8 +15,6 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
 {
     public class TestEventHub
     {
-        private EventHubClient m_eventHubClient;
-        Settings settings;
         public TestEventHub()
         {
                  
@@ -40,7 +38,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToEventHubUsingHttp()
         {
-             m_eventHubClient = getEventHubClient("iotEventHub", "http");
+            EventHubClient m_eventHubClient = getEventHubClient(Settings.EventHub, "http");
             
             string key = "test";
             int value = 12345;
@@ -58,7 +56,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
         [Fact]
         public void SendToEventHubUsingAmqp()
         {
-             m_eventHubClient = getEventHubClient("iotEventHub", "amqp");
+            EventHubClient m_eventHubClient = getEventHubClient(Settings.EventHub, "amqp");
            
             string key = "test";
             int value = 12345;

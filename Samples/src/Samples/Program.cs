@@ -11,8 +11,26 @@ namespace Samples
         static string m_path = "iotqueue0"; //Name of the Queue
         public static void Main(string[] args)
         {
-            Sender.SendMessageToQueue("Hello world", m_conString, m_path, "http");
-            Receiver.ReadMessageFromQueue(m_conString, m_path, "http");
+            Sender sender = new Sender();
+            Receiver receiver = new Receiver();
+
+            sender.SendMessageToQueue();
+            receiver.ReadMessageFromQueue();
+
+            //sender.SendClassObjectToQueueUsingHttp();
+            //receiver.ReadClassObjectFromQueueUsingHttp();
+
+            //sender.SendClassObjectToQueueUsingAmqpWithDataContractSerializer();
+            //receiver.ReadClassObjectFromQueueUsingAmqpWithDataContractSerializer();
+
+            //sender.SendClassObjectToQueueUsingAmqpWithJsonConvert();
+            //receiver.ReadClassObjectFromQueueUsingAmqpWithJsonConvert();
+
+            //sender.SendClassObjectToQueueUsingAmqpWithXmlSerializer();
+            //receiver.ReadClassObjectFromQueueUsingAmqpWithXmlSerializer();
+
+            //sender.SendMessageToTopic();
+            //receiver.ReceiveMessageFromSubscription();   
 
             Console.WriteLine("Please enter!!");
             Console.ReadLine();
