@@ -4,7 +4,7 @@ namespace Samples
 {
     public class Program
     {
-        static string  m_conString = "Endpoint=sb://iotlabcore.servicebus.windows.net/;SharedAccessKeyName=iotLabCore;SharedAccessKey=QbH/yR4rUHa80Lmiz7oCVl0bBIEclfMBZ/luFkQv0sA=";
+        static string  m_conString = "Endpoint=sb:// ;SharedAccessKeyName= ;SharedAccessKey="; //Your Service Bus Connection String
         static string m_path = "iotqueue0"; //Name of the Queue
         public static void Main(string[] args)
         {

@@ -14,7 +14,7 @@ namespace ServiceBus.OpenSdk.EnvironmentSetup
     using System;
     class Program
     {
-        private static string ConnectionString = "Endpoint=sb://iotlabcore.servicebus.windows.net/;SharedAccessKeyName=iotLabCore;SharedAccessKey=QbH/yR4rUHa80Lmiz7oCVl0bBIEclfMBZ/luFkQv0sA="; // Here your connection string
+        private static string ConnectionString = "Endpoint=sb:// ;SharedAccessKeyName= ;SharedAccessKey="; //Your Service Bus Connection String
         static void Main(string[] args)
         {
             //QueueSetup.CreateQueue(18, ConnectionString);
