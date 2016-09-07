@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Samples
 {
@@ -14,8 +11,8 @@ namespace Samples
             Sender sender = new Sender();
             Receiver receiver = new Receiver();
 
-            sender.SendMessageToQueue();
-            receiver.ReadMessageFromQueue();
+             sender.SendMessageToQueue();
+             receiver.ReadMessageFromQueue();
 
             //sender.SendClassObjectToQueueUsingHttp();
             //receiver.ReadClassObjectFromQueueUsingHttp();

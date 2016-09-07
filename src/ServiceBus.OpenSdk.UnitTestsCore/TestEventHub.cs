@@ -17,8 +17,7 @@ namespace ServiceBus.OpenSdk.UnitTestsCore
     {
         public TestEventHub()
         {
-                 
-         
+                         
         }
 
         /// <summary>
